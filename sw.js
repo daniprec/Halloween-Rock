@@ -1,4 +1,5 @@
-const CACHE_NAME = 'halloween-rock-v1'
+// Bump this cache name whenever you change files to force clients to refresh
+const CACHE_NAME = 'halloween-rock-v2'
 const PRECACHE_URLS = [
   '/',
   '/index.html'

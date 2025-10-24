@@ -18,7 +18,10 @@
     .face.smile{transform:translateY(-4px)}
     .face.surprised{transform:scale(0.98)}
     .drum-piece{margin-top:14px;width:200px;height:120px;background:linear-gradient(180deg,#222,#1a1a26);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
-    .bottom{padding:14px;display:flex;justify-content:center}
+  .bottom{padding:14px;display:flex;flex-direction:column;gap:8px;align-items:center}
+  .play-row{display:flex;gap:8px;justify-content:center;width:100%}
+  .play-btn{background:var(--accent);border:0;padding:10px 14px;border-radius:10px;color:#111;font-weight:700}
+  .small-play-btn{background:#2b2b33;border:0;padding:8px 10px;border-radius:8px;color:#fff}
     button{background:var(--accent);border:0;padding:10px 14px;border-radius:10px;color:#111;font-weight:700}
     .shop-btn{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:10px;color:var(--muted)}
     /* modal */
@@ -35,7 +38,10 @@
   <div class="app">
     <div class="topbar">
       <div class="coins"> <span id="coinCount" class="coin-badge">0</span> <span class="small">coins</span></div>
-      <div><button id="openShop" class="shop-btn">Shop</button></div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button id="openShop" class="shop-btn">Shop</button>
+        <button id="clearCacheBtn" class="shop-btn">Clear cache</button>
+      </div>
     </div>
 
     <main class="play-area">
@@ -46,7 +52,10 @@
     </main>
 
     <div class="bottom">
-      <button id="tapBtn">Tap to Drum</button>
+      <div class="play-row">
+        <button id="tapBtn" class="play-btn">Tap to Drum</button>
+      </div>
+      <div id="ownedPlayRow" class="play-row" style="display:none"></div>
     </div>
   </div>
 
@@ -60,7 +69,7 @@
   <script>
     // Minimal vanilla prototype — local persistence, tap to play, shop
     const STORAGE_KEY = 'halloween-rock:v1'
-    const defaultState = { coins: 0, owned: { drums: [], hats: [], memes: [] }, version: 1 }
+  const defaultState = { coins: 0, owned: { drums: [], hats: [], memes: [] }, equipped: { drum: null, hat: null, meme: null }, version: 1 }
 
     function loadState(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultState }catch(e){return defaultState} }
     function saveState(s){ localStorage.setItem(STORAGE_KEY, JSON.stringify(s)) }
@@ -82,18 +91,30 @@
       { id: 'meme1', kind:'meme', name:'Pumpkin Poster', price: 12 }
     ]
 
-    function render(){ coinCount.textContent = state.coins; updateDrumVisual() }
+  function render(){ coinCount.textContent = state.coins; updateDrumVisual(); updateTapLabel(); renderOwnedPlayButtons() }
 
     function updateDrumVisual(){
-      const ownedDrums = state.owned.drums || []
-      drumPiece.textContent = ownedDrums.length ? 'Drum kit: ' + ownedDrums.join(', ') : 'Basic drum'
+      const equipped = state.equipped && state.equipped.drum
+      if (equipped) {
+        drumPiece.textContent = 'Drum kit: ' + equipped
+      } else {
+        const ownedDrums = state.owned.drums || []
+        drumPiece.textContent = ownedDrums.length ? 'Drum kit: ' + ownedDrums.join(', ') : 'Basic drum'
+      }
+    }
+
+    function updateTapLabel(){
+      const equipped = state.equipped && state.equipped.drum
+      tapBtn.textContent = equipped ? `Tap to Play (${equipped})` : 'Tap to Drum'
     }
 
     // simple WebAudio hit (short noise + pitch)
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
-    function playHit(){
+    function playInstrument(id){
+      const freqMap = { snare: 220, tom: 150, basic: 120 }
+      const freq = freqMap[id] || freqMap.basic
       const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
-      o.type = 'square'; o.frequency.setValueAtTime(120, audioCtx.currentTime);
+      o.type = 'square'; o.frequency.setValueAtTime(freq, audioCtx.currentTime);
       g.gain.setValueAtTime(0.0001, audioCtx.currentTime);
       g.gain.exponentialRampToValueAtTime(0.4, audioCtx.currentTime + 0.01);
       g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.45);
@@ -105,7 +126,9 @@
     tapBtn.addEventListener('click', ()=>{
       // ensure audio resumed on first interaction
       if(audioCtx.state === 'suspended') audioCtx.resume()
-      playHit(); face.classList.add('smile'); setTimeout(()=>face.classList.remove('smile'),160)
+      const equipped = state.equipped && state.equipped.drum
+      playInstrument(equipped || 'basic')
+      face.classList.add('smile'); setTimeout(()=>face.classList.remove('smile'),160)
       giveCoin(1)
     })
 
@@ -119,14 +142,73 @@
         const left = document.createElement('div'); left.innerHTML = `<div><strong>${it.name}</strong><div class='small'>${it.price} coins</div></div>`
         const right = document.createElement('div')
         const owned = (state.owned[it.kind+'s'] || []).includes(it.id)
-        if(owned){ row.classList.add('owned'); right.innerHTML = '<span class="small">Owned</span>' }
-        else{ const b = document.createElement('button'); b.textContent = 'Buy'; b.addEventListener('click', ()=>{ buyItem(it) }); right.appendChild(b) }
+        if (owned) {
+          row.classList.add('owned')
+          // show equipped state or equip button for owned items
+          const isEquipped = state.equipped && state.equipped[it.kind] === it.id
+          if (isEquipped) {
+            right.innerHTML = '<span class="small">Equipped</span>'
+          } else {
+            const eq = document.createElement('button'); eq.textContent = 'Equip'; eq.addEventListener('click', ()=>{ equipItem(it) }); right.appendChild(eq)
+          }
+        } else {
+          const b = document.createElement('button'); b.textContent = 'Buy'; b.addEventListener('click', ()=>{ buyItem(it) }); right.appendChild(b)
+        }
         row.appendChild(left); row.appendChild(right); itemsList.appendChild(row)
       })
     }
 
-    function buyItem(item){ if(state.coins < item.price){ alert('Not enough coins'); return }
-      state.coins -= item.price; state.owned[item.kind+'s'] = state.owned[item.kind+'s'] || []; state.owned[item.kind+'s'].push(item.id); saveState(state); render(); renderShop(); shopModal.classList.remove('open') }
+    function buyItem(item){
+      if (state.coins < item.price) { alert('Not enough coins'); return }
+      state.coins -= item.price
+      state.owned[item.kind+'s'] = state.owned[item.kind+'s'] || []
+      if (!state.owned[item.kind+'s'].includes(item.id)) {
+        state.owned[item.kind+'s'].push(item.id)
+      }
+      // Auto-equip newly purchased instrument/item of same kind
+      state.equipped = state.equipped || { drum: null, hat: null, meme: null }
+      state.equipped[item.kind] = item.id
+      saveState(state)
+      render()
+      renderShop()
+      // Keep shop open so user sees the item marked as Owned; show a small confirmation
+      const toast = document.createElement('div')
+      toast.textContent = 'Purchased!'
+      toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:8px 12px;border-radius:8px;z-index:9999'
+      document.body.appendChild(toast)
+      setTimeout(()=>toast.remove(),1200)
+    }
+
+    function equipItem(item){
+      state.equipped = state.equipped || { drum: null, hat: null, meme: null }
+      state.equipped[item.kind] = item.id
+      saveState(state)
+      render()
+      renderShop()
+    }
+
+    // Render play buttons for owned instruments at the bottom
+    function renderOwnedPlayButtons(){
+      const row = document.getElementById('ownedPlayRow')
+      row.innerHTML = ''
+      const ownedDrums = state.owned.drums || []
+      if (ownedDrums.length === 0){ row.style.display = 'none'; return }
+      row.style.display = 'flex'
+      ownedDrums.forEach(id => {
+        const it = SHOP_ITEMS.find(s => s.id === id)
+        const name = it ? it.name : id
+        const b = document.createElement('button')
+        b.className = 'small-play-btn'
+        b.textContent = `Play ${name}`
+        b.addEventListener('click', ()=>{
+          if(audioCtx.state === 'suspended') audioCtx.resume()
+          playInstrument(id)
+          face.classList.add('smile'); setTimeout(()=>face.classList.remove('smile'),160)
+          // no coins for playing via these buttons (they're for variety)
+        })
+        row.appendChild(b)
+      })
+    }
 
     // initial render
     render()
@@ -141,7 +223,37 @@
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js').then(reg => {
           console.log('Service worker registered:', reg.scope)
+          // If there's a waiting worker (new version), tell it to skip waiting so it activates
+          if (reg.waiting) {
+            reg.waiting.postMessage({ type: 'SKIP_WAITING' })
+          }
         }).catch(err => console.warn('SW registration failed:', err))
+      })
+    }
+
+    // Clear cache button (debug) — unregister service workers, clear caches and localStorage, then reload
+    const clearCacheBtn = document.getElementById('clearCacheBtn')
+    if (clearCacheBtn) {
+      clearCacheBtn.addEventListener('click', async () => {
+        try {
+          // Unregister service workers
+          const regs = await navigator.serviceWorker.getRegistrations()
+          await Promise.all(regs.map(r => r.unregister()))
+          // Delete caches
+          const keys = await caches.keys()
+          await Promise.all(keys.map(k => caches.delete(k)))
+          // Clear game state
+          localStorage.removeItem('halloween-rock:v1')
+          // Show feedback and reload
+          const t = document.createElement('div')
+          t.textContent = 'Cache cleared — reloading...'
+          t.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:8px 12px;border-radius:8px;z-index:9999'
+          document.body.appendChild(t)
+          setTimeout(() => location.reload(true), 600)
+        } catch (e) {
+          console.error('Clear cache failed', e)
+          alert('Failed to clear cache: ' + e.message)
+        }
       })
     }
   </script>
