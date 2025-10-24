@@ -2,7 +2,8 @@
 const CACHE_NAME = 'halloween-rock-v2'
 const PRECACHE_URLS = [
   '/',
-  '/index.html'
+  '/index.html',
+  '/face.png'
 ]
 
 self.addEventListener('install', event => {
