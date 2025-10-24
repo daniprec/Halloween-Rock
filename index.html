@@ -32,6 +32,7 @@
     .item.owned{opacity:.4}
     .items{display:flex;flex-direction:column;gap:6px;margin-top:8px}
     .small{font-size:12px;color:var(--muted)}
+    .coin-fly{position:fixed;font-weight:800;color:#ffd27a;text-shadow:0 4px 12px rgba(0,0,0,.6);pointer-events:none;transform:translateY(0);transition:transform 900ms cubic-bezier(.2,.9,.2,1),opacity 900ms}
   </style>
 </head>
 <body>
@@ -40,7 +41,6 @@
       <div class="coins"> <span id="coinCount" class="coin-badge">0</span> <span class="small">coins</span></div>
       <div style="display:flex;gap:8px;align-items:center">
         <button id="openShop" class="shop-btn">Shop</button>
-        <button id="clearCacheBtn" class="shop-btn">Clear cache</button>
       </div>
     </div>
 
@@ -104,8 +104,8 @@
     }
 
     function updateTapLabel(){
-      const equipped = state.equipped && state.equipped.drum
-      tapBtn.textContent = equipped ? `Tap to Play (${equipped})` : 'Tap to Drum'
+      // Keep the main tap button label constant for the basic drum
+      tapBtn.textContent = 'Tap to Drum'
     }
 
     // simple WebAudio hit (short noise + pitch)
@@ -121,13 +121,36 @@
       o.connect(g); g.connect(audioCtx.destination); o.start(); setTimeout(()=>o.stop(),160)
     }
 
-    function giveCoin(n=1){ state.coins = (state.coins||0) + n; saveState(state); render() }
+    function giveCoin(n=1){ state.coins = (state.coins||0) + n; saveState(state); render(); showCoinAnimation(n) }
+
+    function showCoinAnimation(n=1){
+      try{
+        const coinEl = document.getElementById('coinCount')
+        const rect = coinEl.getBoundingClientRect()
+        const el = document.createElement('div')
+        el.className = 'coin-fly'
+        el.textContent = `+${n}`
+        document.body.appendChild(el)
+        // position centered over coin counter
+        el.style.left = (rect.left + rect.width/2) + 'px'
+        el.style.top = (rect.top + rect.height/2) + 'px'
+        // center text horizontally
+        el.style.transform = 'translate(-50%, 0)'
+        el.style.opacity = '1'
+        // animate up and fade
+        requestAnimationFrame(()=>{
+          el.style.transform = 'translate(-50%, -48px)'
+          el.style.opacity = '0'
+        })
+        setTimeout(()=>el.remove(),900)
+      }catch(e){console.warn('coin animation failed', e)}
+    }
 
     tapBtn.addEventListener('click', ()=>{
       // ensure audio resumed on first interaction
       if(audioCtx.state === 'suspended') audioCtx.resume()
-      const equipped = state.equipped && state.equipped.drum
-      playInstrument(equipped || 'basic')
+  // Always play the basic drum for the main button
+  playInstrument('basic')
       face.classList.add('smile'); setTimeout(()=>face.classList.remove('smile'),160)
       giveCoin(1)
     })
@@ -165,9 +188,7 @@
       if (!state.owned[item.kind+'s'].includes(item.id)) {
         state.owned[item.kind+'s'].push(item.id)
       }
-      // Auto-equip newly purchased instrument/item of same kind
-      state.equipped = state.equipped || { drum: null, hat: null, meme: null }
-      state.equipped[item.kind] = item.id
+      // Do NOT auto-equip drums on purchase; just add the new button. Users can Equip manually.
       saveState(state)
       render()
       renderShop()
@@ -199,7 +220,8 @@
         const name = it ? it.name : id
         const b = document.createElement('button')
         b.className = 'small-play-btn'
-        b.textContent = `Play ${name}`
+        // show only the instrument name on the small button
+        b.textContent = name
         b.addEventListener('click', ()=>{
           if(audioCtx.state === 'suspended') audioCtx.resume()
           playInstrument(id)
@@ -232,31 +254,11 @@
       })
     }
 
-    // Clear cache button (debug) — unregister service workers, clear caches and localStorage, then reload
-    const clearCacheBtn = document.getElementById('clearCacheBtn')
-    if (clearCacheBtn) {
-      clearCacheBtn.addEventListener('click', async () => {
-        try {
-          // Unregister service workers
-          const regs = await navigator.serviceWorker.getRegistrations()
-          await Promise.all(regs.map(r => r.unregister()))
-          // Delete caches
-          const keys = await caches.keys()
-          await Promise.all(keys.map(k => caches.delete(k)))
-          // Clear game state
-          localStorage.removeItem('halloween-rock:v1')
-          // Show feedback and reload
-          const t = document.createElement('div')
-          t.textContent = 'Cache cleared — reloading...'
-          t.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:8px 12px;border-radius:8px;z-index:9999'
-          document.body.appendChild(t)
-          setTimeout(() => location.reload(true), 600)
-        } catch (e) {
-          console.error('Clear cache failed', e)
-          alert('Failed to clear cache: ' + e.message)
-        }
-      })
-    }
+    // Note: Clear-cache debug button removed for security. To clear caches yourself:
+    // 1) Open DevTools -> Application -> Service Workers -> Unregister the service worker.
+    // 2) Application -> Storage -> Clear site data (this clears Cache Storage and Local Storage).
+    // Or run this in the Console:
+    // navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())); caches.keys().then(ks=>Promise.all(ks.map(k=>caches.delete(k)))); localStorage.removeItem('halloween-rock:v1')
   </script>
 </body>
 </html>
