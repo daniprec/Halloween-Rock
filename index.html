@@ -18,8 +18,8 @@
     .face.smile{transform:translateY(-4px)}
     .face.surprised{transform:scale(0.98)}
     .drum-piece{margin-top:14px;width:200px;height:120px;background:linear-gradient(180deg,#222,#1a1a26);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
-  .bottom{padding:14px;display:flex;flex-direction:column;gap:8px;align-items:center}
-  .play-row{display:flex;gap:8px;justify-content:center;width:100%}
+    .bottom{padding:14px;display:flex;justify-content:center}
+  .play-row{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;width:100%}
   .play-btn{background:var(--accent);border:0;padding:10px 14px;border-radius:10px;color:#111;font-weight:700}
   .small-play-btn{background:#2b2b33;border:0;padding:8px 10px;border-radius:8px;color:#fff}
     button{background:var(--accent);border:0;padding:10px 14px;border-radius:10px;color:#111;font-weight:700}
@@ -52,10 +52,10 @@
     </main>
 
     <div class="bottom">
-      <div class="play-row">
+      <div class="play-row" id="playRow">
         <button id="tapBtn" class="play-btn">Tap to Drum</button>
+        <div id="ownedPlayRow" style="display:flex;gap:8px;margin-left:4px"></div>
       </div>
-      <div id="ownedPlayRow" class="play-row" style="display:none"></div>
     </div>
   </div>
 
@@ -204,7 +204,8 @@
           if(audioCtx.state === 'suspended') audioCtx.resume()
           playInstrument(id)
           face.classList.add('smile'); setTimeout(()=>face.classList.remove('smile'),160)
-          // no coins for playing via these buttons (they're for variety)
+          // award a coin for every play button
+          giveCoin(1)
         })
         row.appendChild(b)
       })
