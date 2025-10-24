@@ -50,7 +50,7 @@
 
     <main class="play-area">
       <div class="doodle" id="doodle">
-  <div id="face" class="face" style="background-image: url('public/images/face.png')" aria-label="Javier's face"></div>
+        <div id="face" class="face" style="background-image: url('public/images/face.png')" aria-label="Javier's face"></div>
         <div class="drum-piece" id="drumPiece">Basic drum</div>
       </div>
     </main>
@@ -114,9 +114,48 @@
 
     // simple WebAudio hit (short noise + pitch)
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+
+    // Static-sample loader: tries /public/audio/<id>.(wav|mp3|ogg|m4a) and decodes into `samples`
+    const samples = {} // id -> AudioBuffer
+    const SAMPLE_EXTS = ['wav','mp3','ogg','m4a']
+
+    async function loadSampleIfExists(id){
+      for (const ext of SAMPLE_EXTS){
+        const url = `/public/audio/${id}.${ext}`
+        try{
+          const res = await fetch(url)
+          if (!res.ok) continue
+          const ab = await res.arrayBuffer()
+          try{
+            const buf = await audioCtx.decodeAudioData(ab.slice(0))
+            samples[id] = buf
+            console.log('Loaded sample', id, 'from', url)
+            return true
+          }catch(decodeErr){ console.warn('Failed to decode', url, decodeErr); continue }
+        }catch(fetchErr){ /* ignore and try next ext */ }
+      }
+      return false
+    }
+
+    async function loadAllSamples(){
+      const ids = new Set(SHOP_ITEMS.map(s=>s.id))
+      ids.add('basic')
+      await Promise.all(Array.from(ids).map(id => loadSampleIfExists(id)))
+    }
+
     function playInstrument(id){
+      // If a static sample exists for this id, play it via buffer source
+      if (samples[id]){
+        try{
+          const src = audioCtx.createBufferSource(); src.buffer = samples[id]; src.connect(audioCtx.destination); src.start()
+          setTimeout(()=>{ try{ src.disconnect() }catch(e){} }, (samples[id].duration+0.1)*1000)
+          return
+        }catch(e){ console.warn('sample playback failed, falling back', e) }
+      }
+
+      // fallback: synthesized short hit
       const freqMap = { snare: 220, tom: 150, basic: 120 }
-      const freq = freqMap[id] || freqMap.basic
+      const freq = (freqMap[id] || freqMap.basic)
       const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
       o.type = 'square'; o.frequency.setValueAtTime(freq, audioCtx.currentTime);
       g.gain.setValueAtTime(0.0001, audioCtx.currentTime);
@@ -239,6 +278,9 @@
 
     // initial render
     render()
+
+  // try to load any static audio samples from public/audio/
+  loadAllSamples().catch(e=>console.warn('loading static samples failed', e))
 
     // expose for debugging
     window._hr = { state, saveState, loadState }
