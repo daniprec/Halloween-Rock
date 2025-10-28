@@ -31,3 +31,8 @@ Shop modal:
 - Already bought pieces are marked as owned and greyed out.
 - There are also hats that can be bought to customize Javier's look.
 - There are also memes that can be bought to add into the background.
+
+
+## Sounds
+
+Downloaded from https://samplefocus.com/
