@@ -21,7 +21,9 @@
     .bottom{padding:14px;display:flex;justify-content:center}
   .play-row{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;width:100%}
   .play-btn{background:var(--accent);border:0;padding:10px 14px;border-radius:10px;color:#111;font-weight:700}
-  .small-play-btn{background:#2b2b33;border:0;padding:8px 10px;border-radius:8px;color:#fff}
+  /* small icon buttons shown for owned instruments */
+  .small-play-btn{background:#2b2b33;border:0;padding:6px;border-radius:10px;color:#fff;width:56px;height:56px;display:inline-flex;align-items:center;justify-content:center}
+  .small-play-btn img{width:40px;height:40px;object-fit:contain;display:block}
     button{background:var(--accent);border:0;padding:10px 14px;border-radius:10px;color:#111;font-weight:700}
     .shop-btn{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:10px;color:var(--muted)}
     /* modal */
@@ -305,8 +307,21 @@
         const name = it ? it.name : id
         const b = document.createElement('button')
         b.className = 'small-play-btn'
-        // show only the instrument name on the small button
-        b.textContent = name
+        b.title = name
+        b.setAttribute('aria-label', name)
+
+        // If the shop item provides an icon path, render the icon; otherwise fall back to text
+        if (it && it.icon) {
+          const img = document.createElement('img')
+          img.src = it.icon
+          img.alt = name
+          // fixed width/height on the img for consistency (CSS also enforces this)
+          img.width = 40; img.height = 40
+          b.appendChild(img)
+        } else {
+          b.textContent = name
+        }
+
         b.addEventListener('click', ()=>{
           if(audioCtx.state === 'suspended') audioCtx.resume()
           playInstrument(id)
