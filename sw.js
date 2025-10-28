@@ -1,9 +1,9 @@
 // Bump this cache name whenever you change files to force clients to refresh
 const CACHE_NAME = 'halloween-rock-v2'
+// Use relative paths in the precache so the service worker works under a repo subpath (GH Pages)
 const PRECACHE_URLS = [
-  '/',
-  '/index.html',
-  '/public/images/face.png'
+  'index.html',
+  'public/images/face.png'
 ]
 
 self.addEventListener('install', event => {
@@ -37,7 +37,7 @@ self.addEventListener('fetch', event => {
             caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy))
           }
           return resp
-        }).catch(() => caches.match('/index.html'))
+          }).catch(() => caches.match('index.html'))
       })
     )
   }
