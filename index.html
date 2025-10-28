@@ -14,10 +14,19 @@
     .coin-badge{background:linear-gradient(180deg,#ffd27a,#ffb86b);color:#111;padding:6px 10px;border-radius:20px}
     .play-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px}
     .doodle{width:260px;height:340px;border-radius:16px;background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:12px;box-shadow:0 6px 20px rgba(0,0,0,.6)}
-    .face{width:120px;height:120px;border-radius:999px;background:#fff;background-size:cover;overflow:hidden;display:flex;align-items:center;justify-content:center}
-    .face.smile{transform:translateY(-4px)}
+  /* face used as an overlayed image inside the stacked figure; size is controlled by .stack */
+  .face{border-radius:999px;overflow:hidden;display:block;transition:transform .12s}
+  .face.smile{transform:translateY(-6px)}
     .face.surprised{transform:scale(0.98)}
-    .drum-piece{margin-top:14px;width:200px;height:120px;background:linear-gradient(180deg,#222,#1a1a26);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+  .drum-piece{margin-top:14px;width:200px;height:120px;background:linear-gradient(180deg,#222,#1a1a26);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+  /* stacked figure images — ensure images fill the stack and overlay exactly */
+  .stack img{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain}
+  /* ensure the face image is on top */
+  #face{z-index:40}
+  #drumTapImg{z-index:30}
+  #drumImg{z-index:20}
+  #armsImg{z-index:25}
+  #bodyImg{z-index:10}
     .bottom{padding:14px;display:flex;justify-content:center}
   .play-row{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;width:100%}
   .play-btn{background:var(--accent);border:0;padding:10px 14px;border-radius:10px;color:#111;font-weight:700}
@@ -54,7 +63,15 @@
 
     <main class="play-area">
       <div class="doodle" id="doodle">
-        <div id="face" class="face" style="background-image: url('public/images/face.png')" aria-label="Javier's face"></div>
+        <!-- layered character composed of multiple same-size images (body, arms, drum, face).
+             Images are centered and absolutely stacked so they align regardless of viewport. -->
+        <div class="stack" id="figureStack" aria-hidden="false" style="width:220px;height:220px;position:relative;">
+          <img id="bodyImg" src="public/images/body.png" alt="body" />
+          <img id="armsImg" src="public/images/arms.png" alt="arms" />
+          <img id="drumImg" src="public/images/drum.png" alt="drum" />
+          <img id="drumTapImg" src="public/images/drum_tap.png" alt="drum tapped" style="opacity:0;pointer-events:none" />
+          <img id="face" class="face" src="public/images/face.png" alt="face" />
+        </div>
         <div class="drum-piece" id="drumPiece">Basic drum</div>
       </div>
     </main>
@@ -225,7 +242,7 @@
       }catch(e){console.warn('coin animation failed', e)}
     }
 
-    // Tapping the central play area triggers the basic drum (ignore clicks on buttons)
+  // Tapping the central play area triggers the basic drum (ignore clicks on buttons)
     if (playArea) {
       // insert idle hint into the play area
       playArea.appendChild(idleHint)
@@ -234,7 +251,15 @@
         if (e.target && e.target.closest && e.target.closest('button')) return
         if (audioCtx.state === 'suspended') audioCtx.resume()
         playInstrument('basic')
-        face.classList.add('smile'); setTimeout(()=>face.classList.remove('smile'),160)
+        // quick tapped-drum visual: fade in the tapped drum image then hide it
+        const tapImg = document.getElementById('drumTapImg')
+        if (tapImg) {
+          tapImg.style.transition = 'opacity 120ms ease'
+          tapImg.style.opacity = '1'
+          setTimeout(()=>{ tapImg.style.opacity = '0' }, 140)
+        }
+        const faceEl = document.getElementById('face')
+        if (faceEl) { faceEl.classList.add('smile'); setTimeout(()=>faceEl.classList.remove('smile'),160) }
         giveCoin(1)
         hideIdleHint()
         resetIdleTimer()
