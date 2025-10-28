@@ -75,7 +75,7 @@
           <img id="armsImg" src="public/images/arms.png" alt="arms" />
           <img id="drumImg" src="public/images/drum.png" alt="drum" />
           <!-- cymbal sits above the drum and above the character when purchased -->
-          <img id="cymbalImg" src="public/images/cymbal.png" alt="cymbal" style="opacity:0;pointer-events:none" />
+          <img id="cymbalImg" src="public/images/cymbal.png" alt="cymbal" style="display:none;pointer-events:none" />
           <!-- tapped overlay images (drum and cymbal); only one will be shown at a time -->
           <img id="drumTapImg" src="public/images/drum_tap.png" alt="drum tapped" style="opacity:0;pointer-events:none" />
           <img id="cymbalTapImg" src="public/images/cymbal_tap.png" alt="cymbal tapped" style="opacity:0;pointer-events:none" />
@@ -154,9 +154,9 @@
         // always ensure drum base image is the drum
         if (drumImg) drumImg.src = 'public/images/drum.png'
         if (armsImg) armsImg.src = 'public/images/arms.png'
-    // show cymbal overlay only when the cymbal is equipped (which implies it was purchased)
-    const isEquippedCymbal = state.equipped && state.equipped.drum === 'cymbal'
-    if (cymbalImgEl) cymbalImgEl.style.opacity = isEquippedCymbal ? '1' : '0'
+  // show cymbal overlay only when the cymbal is equipped (which implies it was purchased)
+  const isEquippedCymbal = state.equipped && state.equipped.drum === 'cymbal'
+  if (cymbalImgEl) cymbalImgEl.style.display = isEquippedCymbal ? 'block' : 'none'
       }
 
     // simple WebAudio hit (short noise + pitch)
@@ -252,30 +252,29 @@
 
       if (id === 'cymbal'){
         // ensure cymbal base is visible during the tap (remember previous state)
-        const prevCymbalVisible = cymbalImgEl && cymbalImgEl.style.opacity === '1'
-        if (cymbalImgEl) cymbalImgEl.style.opacity = '1'
+        const prevCymbalVisible = cymbalImgEl && (cymbalImgEl.style.display !== 'none')
+        // hide base immediately so the tap image fully replaces it
+        if (cymbalImgEl) cymbalImgEl.style.display = 'none'
         if (cymbalTapImg) { cymbalTapImg.style.transition = 'opacity 120ms ease'; cymbalTapImg.style.opacity = '1' }
-        // hide base so the tap image appears to replace it
-        if (cymbalImgEl) cymbalImgEl.style.opacity = '0'
         if (armsImg) { armsImg.src = 'public/images/arms_cymbal.png' }
         if (faceEl) { faceEl.classList.add('smile') }
         setTimeout(()=>{
           if (cymbalTapImg) cymbalTapImg.style.opacity = '0'
           // restore cymbal base visibility only if it was previously visible (equipped)
-          if (cymbalImgEl) cymbalImgEl.style.opacity = prevCymbalVisible ? '1' : '0'
+          if (cymbalImgEl) cymbalImgEl.style.display = prevCymbalVisible ? 'block' : 'none'
           if (armsImg) armsImg.src = 'public/images/arms.png'
           if (faceEl) faceEl.classList.remove('smile')
         }, 180)
       } else {
         // If a cymbal overlay is present (equipped), temporarily hide it so the drum tap shows
-        const prevCymbalVisible = cymbalImgEl && cymbalImgEl.style.opacity === '1'
-        if (prevCymbalVisible && cymbalImgEl) cymbalImgEl.style.opacity = '0'
+        const prevCymbalVisible = cymbalImgEl && (cymbalImgEl.style.display !== 'none')
+        if (prevCymbalVisible && cymbalImgEl) cymbalImgEl.style.display = 'none'
         if (drumTapImg) { drumTapImg.style.transition = 'opacity 120ms ease'; drumTapImg.style.opacity = '1' }
         if (faceEl) { faceEl.classList.add('smile') }
         setTimeout(()=>{
           if (drumTapImg) drumTapImg.style.opacity = '0'
           if (faceEl) faceEl.classList.remove('smile')
-          if (prevCymbalVisible && cymbalImgEl) cymbalImgEl.style.opacity = '1'
+          if (prevCymbalVisible && cymbalImgEl) cymbalImgEl.style.display = 'block'
         }, 140)
       }
 
