@@ -8,6 +8,9 @@ const PRECACHE_URLS = [
   'public/audio/drum.wav',
   // tom sample (precache so it's available offline on install)
   'public/audio/tom.wav'
+  ,
+  // cymbal sample (precache so it's available offline on install)
+  'public/audio/cymbal.wav'
 ]
 
 self.addEventListener('install', event => {
