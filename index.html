@@ -139,9 +139,22 @@
     }
 
     async function loadAllSamples(){
+      // Try samples for shop items plus some common kick/drum names and 'basic'
       const ids = new Set(SHOP_ITEMS.map(s=>s.id))
+      // ensure main/basic is checked
       ids.add('basic')
+      // also try common kick/drum filenames that you might have uploaded
+      ids.add('drum')
+      ids.add('kick')
       await Promise.all(Array.from(ids).map(id => loadSampleIfExists(id)))
+
+      // If a drum/kick sample was provided under 'drum' or 'kick' and there's no
+      // explicit 'basic' sample, use the 'drum' sample as the basic sound so the
+      // main Tap button plays the kick.
+      if (!samples['basic']){
+        if (samples['drum']) samples['basic'] = samples['drum']
+        else if (samples['kick']) samples['basic'] = samples['kick']
+      }
     }
 
     function playInstrument(id){
