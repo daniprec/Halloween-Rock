@@ -13,14 +13,15 @@
     .coins{display:flex;gap:8px;align-items:center;font-weight:700}
     .coin-badge{background:linear-gradient(180deg,#ffd27a,#ffb86b);color:#111;padding:6px 10px;border-radius:20px}
     .play-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px}
-    .doodle{width:260px;height:340px;border-radius:16px;background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:12px;box-shadow:0 6px 20px rgba(0,0,0,.6)}
+  /* make the doodle card responsive so the stacked figure can grow to fill more of the screen */
+  .doodle{width:92%;max-width:420px;height:auto;border-radius:16px;background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:16px;box-shadow:0 6px 20px rgba(0,0,0,.6)}
   /* face used as an overlayed image inside the stacked figure; size is controlled by .stack */
-  .face{border-radius:999px;overflow:hidden;display:block;transition:transform .12s}
+  .face{display:block;transition:transform .12s;width:100%;height:100%;object-fit:contain}
   .face.smile{transform:translateY(-6px)}
     .face.surprised{transform:scale(0.98)}
   .drum-piece{margin-top:14px;width:200px;height:120px;background:linear-gradient(180deg,#222,#1a1a26);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
   /* stacked figure images — ensure images fill the stack and overlay exactly */
-  .stack{position:relative;z-index:1}
+  .stack{position:relative;z-index:1;width:86%;max-width:380px;margin:8px auto;aspect-ratio:1/1}
   .stack img{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
   /* ensure the face image is on top */
   #face{z-index:40}
@@ -66,14 +67,13 @@
       <div class="doodle" id="doodle">
         <!-- layered character composed of multiple same-size images (body, arms, drum, face).
              Images are centered and absolutely stacked so they align regardless of viewport. -->
-        <div class="stack" id="figureStack" aria-hidden="false" style="width:220px;height:220px;position:relative;">
+        <div class="stack" id="figureStack" aria-hidden="false">
           <img id="bodyImg" src="public/images/body.png" alt="body" />
           <img id="armsImg" src="public/images/arms.png" alt="arms" />
           <img id="drumImg" src="public/images/drum.png" alt="drum" />
           <img id="drumTapImg" src="public/images/drum_tap.png" alt="drum tapped" style="opacity:0;pointer-events:none" />
           <img id="face" class="face" src="public/images/face.png" alt="face" />
         </div>
-        <div class="drum-piece" id="drumPiece">Basic drum</div>
       </div>
     </main>
 
@@ -102,7 +102,7 @@
     let state = loadState()
   const coinCount = document.getElementById('coinCount')
     const face = document.getElementById('face')
-    const drumPiece = document.getElementById('drumPiece')
+  // drumPiece removed — we no longer show text below the figure
     const openShop = document.getElementById('openShop')
     const shopModal = document.getElementById('shopModal')
     const closeShop = document.getElementById('closeShop')
@@ -125,13 +125,8 @@
   function render(){ coinCount.textContent = state.coins; updateDrumVisual(); updateTapLabel(); renderOwnedPlayButtons() }
 
     function updateDrumVisual(){
-      const equipped = state.equipped && state.equipped.drum
-      if (equipped) {
-        drumPiece.textContent = 'Drum kit: ' + equipped
-      } else {
-        const ownedDrums = state.owned.drums || []
-        drumPiece.textContent = ownedDrums.length ? 'Drum kit: ' + ownedDrums.join(', ') : 'Basic drum'
-      }
+      // No textual drum label shown in the UI any more.
+      // This function kept for compatibility with render().
     }
 
     function updateTapLabel(){
