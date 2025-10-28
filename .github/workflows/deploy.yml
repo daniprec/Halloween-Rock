@@ -14,7 +14,15 @@ jobs:
         with:
           node-version: '18'
       - name: Install
-        run: npm ci
+        run: |
+          # Use npm ci when a lockfile exists for deterministic installs,
+          # otherwise fall back to npm install so deploy doesn't fail on repos
+          # without a committed lockfile.
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
       - name: Build
         run: npm run build
       - name: Publish to gh-pages
