@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Halloween Rock — Tap to Drum</title>
+  <style>
+    :root{--bg:#0b0b10;--card:#111217;--accent:#ffb86b;--muted:#808296;color-scheme:dark}
+    html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial}
+    body{background:linear-gradient(180deg,#06060a 0%, #12121a 100%);color:#fff;display:flex;align-items:stretch}
+    .app{max-width:420px;margin:auto;width:100%;height:100vh;display:flex;flex-direction:column}
+    .topbar{display:flex;justify-content:space-between;align-items:center;padding:12px}
+    .coins{display:flex;gap:8px;align-items:center;font-weight:700}
+    .coin-badge{background:linear-gradient(180deg,#ffd27a,#ffb86b);color:#111;padding:6px 10px;border-radius:20px}
+    .play-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px}
+    .doodle{width:260px;height:340px;border-radius:16px;background:var(--card);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:12px;box-shadow:0 6px 20px rgba(0,0,0,.6)}
+    .face{width:120px;height:120px;border-radius:999px;background:#fff;background-size:cover;overflow:hidden;display:flex;align-items:center;justify-content:center}
+    .face.smile{transform:translateY(-4px)}
+    .face.surprised{transform:scale(0.98)}
+    .drum-piece{margin-top:14px;width:200px;height:120px;background:linear-gradient(180deg,#222,#1a1a26);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted)}
+    .bottom{padding:14px;display:flex;justify-content:center}
+  .play-row{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;width:100%}
+  .play-btn{background:var(--accent);border:0;padding:10px 14px;border-radius:10px;color:#111;font-weight:700}
+  .small-play-btn{background:#2b2b33;border:0;padding:8px 10px;border-radius:8px;color:#fff}
+    button{background:var(--accent);border:0;padding:10px 14px;border-radius:10px;color:#111;font-weight:700}
+    .shop-btn{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px 12px;border-radius:10px;color:var(--muted)}
+    /* modal */
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+    .modal.open{display:flex}
+    .modal-card{width:92%;max-width:420px;background:#0c0c10;border-radius:12px;padding:12px;box-shadow:0 10px 40px rgba(0,0,0,.6)}
+    .item{display:flex;justify-content:space-between;align-items:center;padding:8px;border-radius:8px}
+    .item.owned{opacity:.4}
+    .items{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+    .small{font-size:12px;color:var(--muted)}
+    .coin-fly{position:fixed;font-weight:800;color:#ffd27a;text-shadow:0 4px 12px rgba(0,0,0,.6);pointer-events:none;transform:translateY(0);transition:transform 900ms cubic-bezier(.2,.9,.2,1),opacity 900ms}
+    .update-banner{position:fixed;left:50%;transform:translateX(-50%);top:12px;background:#111;padding:8px 12px;border-radius:10px;display:none;align-items:center;gap:8px;z-index:9999}
+    .update-banner button{background:#ffd27a;color:#111;border:0;padding:6px 8px;border-radius:6px}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="coins"> <span id="coinCount" class="coin-badge">0</span> <span class="small">coins</span></div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button id="openShop" class="shop-btn">Shop</button>
+      </div>
+    </div>
+
+  <div id="updateBanner" class="update-banner"><span>New version available</span><button id="reloadBtn">Reload</button></div>
+
+    <main class="play-area">
+      <div class="doodle" id="doodle">
+        <div id="face" class="face" style="background-image: url('public/images/face.png')" aria-label="Javier's face"></div>
+        <div class="drum-piece" id="drumPiece">Basic drum</div>
+      </div>
+    </main>
+
+    <div class="bottom">
+      <div class="play-row" id="playRow">
+        <button id="tapBtn" class="play-btn">Tap to Drum</button>
+        <div id="ownedPlayRow" style="display:flex;gap:8px;margin-left:4px"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="shopModal" class="modal">
+    <div class="modal-card">
+      <div style="display:flex;justify-content:space-between;align-items:center"><strong>Shop</strong><button id="closeShop" class="shop-btn">Close</button></div>
+      <div class="items" id="itemsList"></div>
+    </div>
+  </div>
+
+  <script>
+    // Minimal vanilla prototype — local persistence, tap to play, shop
+    const STORAGE_KEY = 'halloween-rock:v1'
+  const defaultState = { coins: 0, owned: { drums: [], hats: [], memes: [] }, equipped: { drum: null, hat: null, meme: null }, version: 1 }
+
+    function loadState(){ try{ return JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultState }catch(e){return defaultState} }
+    function saveState(s){ localStorage.setItem(STORAGE_KEY, JSON.stringify(s)) }
+
+    let state = loadState()
+    const coinCount = document.getElementById('coinCount')
+    const tapBtn = document.getElementById('tapBtn')
+    const face = document.getElementById('face')
+    const drumPiece = document.getElementById('drumPiece')
+    const openShop = document.getElementById('openShop')
+    const shopModal = document.getElementById('shopModal')
+    const closeShop = document.getElementById('closeShop')
+    const itemsList = document.getElementById('itemsList')
+
+    const SHOP_ITEMS = [
+      { id: 'snare', kind:'drum', name:'Snare', price: 10 },
+      { id: 'tom', kind:'drum', name:'Tom', price: 20 },
+      { id: 'hat', kind:'hat', name:'Spooky Hat', price: 15 },
+      { id: 'meme1', kind:'meme', name:'Pumpkin Poster', price: 12 }
+    ]
+
+  function render(){ coinCount.textContent = state.coins; updateDrumVisual(); updateTapLabel(); renderOwnedPlayButtons() }
+
+    function updateDrumVisual(){
+      const equipped = state.equipped && state.equipped.drum
+      if (equipped) {
+        drumPiece.textContent = 'Drum kit: ' + equipped
+      } else {
+        const ownedDrums = state.owned.drums || []
+        drumPiece.textContent = ownedDrums.length ? 'Drum kit: ' + ownedDrums.join(', ') : 'Basic drum'
+      }
+    }
+
+    function updateTapLabel(){
+      // Keep the main tap button label constant for the basic drum
+      tapBtn.textContent = 'Tap to Drum'
+    }
+
+    // simple WebAudio hit (short noise + pitch)
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+
+    // Static-sample loader: tries /public/audio/<id>.(wav|mp3|ogg|m4a) and decodes into `samples`
+    const samples = {} // id -> AudioBuffer
+    const SAMPLE_EXTS = ['wav','mp3','ogg','m4a']
+
+    async function loadSampleIfExists(id){
+      for (const ext of SAMPLE_EXTS){
+        const url = `/public/audio/${id}.${ext}`
+        try{
+          const res = await fetch(url)
+          if (!res.ok) continue
+          const ab = await res.arrayBuffer()
+          try{
+            const buf = await audioCtx.decodeAudioData(ab.slice(0))
+            samples[id] = buf
+            console.log('Loaded sample', id, 'from', url)
+            return true
+          }catch(decodeErr){ console.warn('Failed to decode', url, decodeErr); continue }
+        }catch(fetchErr){ /* ignore and try next ext */ }
+      }
+      return false
+    }
+
+    async function loadAllSamples(){
+      const ids = new Set(SHOP_ITEMS.map(s=>s.id))
+      ids.add('basic')
+      await Promise.all(Array.from(ids).map(id => loadSampleIfExists(id)))
+    }
+
+    function playInstrument(id){
+      // If a static sample exists for this id, play it via buffer source
+      if (samples[id]){
+        try{
+          const src = audioCtx.createBufferSource(); src.buffer = samples[id]; src.connect(audioCtx.destination); src.start()
+          setTimeout(()=>{ try{ src.disconnect() }catch(e){} }, (samples[id].duration+0.1)*1000)
+          return
+        }catch(e){ console.warn('sample playback failed, falling back', e) }
+      }
+
+      // fallback: synthesized short hit
+      const freqMap = { snare: 220, tom: 150, basic: 120 }
+      const freq = (freqMap[id] || freqMap.basic)
+      const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+      o.type = 'square'; o.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      g.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.4, audioCtx.currentTime + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.45);
+      o.connect(g); g.connect(audioCtx.destination); o.start(); setTimeout(()=>o.stop(),160)
+    }
+
+    function giveCoin(n=1){ state.coins = (state.coins||0) + n; saveState(state); render(); showCoinAnimation(n) }
+
+    function showCoinAnimation(n=1){
+      try{
+        const coinEl = document.getElementById('coinCount')
+        const rect = coinEl.getBoundingClientRect()
+        const el = document.createElement('div')
+        el.className = 'coin-fly'
+        el.textContent = `+${n}`
+        document.body.appendChild(el)
+        // position centered over coin counter
+        el.style.left = (rect.left + rect.width/2) + 'px'
+        el.style.top = (rect.top + rect.height/2) + 'px'
+        // center text horizontally
+        el.style.transform = 'translate(-50%, 0)'
+        el.style.opacity = '1'
+        // animate up and fade
+        requestAnimationFrame(()=>{
+          el.style.transform = 'translate(-50%, -48px)'
+          el.style.opacity = '0'
+        })
+        setTimeout(()=>el.remove(),900)
+      }catch(e){console.warn('coin animation failed', e)}
+    }
+
+    tapBtn.addEventListener('click', ()=>{
+      // ensure audio resumed on first interaction
+      if(audioCtx.state === 'suspended') audioCtx.resume()
+  // Always play the basic drum for the main button
+  playInstrument('basic')
+      face.classList.add('smile'); setTimeout(()=>face.classList.remove('smile'),160)
+      giveCoin(1)
+    })
+
+    openShop.addEventListener('click', ()=>{ renderShop(); shopModal.classList.add('open') })
+    closeShop.addEventListener('click', ()=>{ shopModal.classList.remove('open') })
+
+    function renderShop(){
+      itemsList.innerHTML = ''
+      SHOP_ITEMS.forEach(it=>{
+        const row = document.createElement('div'); row.className = 'item'
+        const left = document.createElement('div'); left.innerHTML = `<div><strong>${it.name}</strong><div class='small'>${it.price} coins</div></div>`
+        const right = document.createElement('div')
+        const owned = (state.owned[it.kind+'s'] || []).includes(it.id)
+        if (owned) {
+          row.classList.add('owned')
+          // show equipped state or equip button for owned items
+          const isEquipped = state.equipped && state.equipped[it.kind] === it.id
+          if (isEquipped) {
+            right.innerHTML = '<span class="small">Equipped</span>'
+          } else {
+            const eq = document.createElement('button'); eq.textContent = 'Equip'; eq.addEventListener('click', ()=>{ equipItem(it) }); right.appendChild(eq)
+          }
+        } else {
+          const b = document.createElement('button'); b.textContent = 'Buy'; b.addEventListener('click', ()=>{ buyItem(it) }); right.appendChild(b)
+        }
+        row.appendChild(left); row.appendChild(right); itemsList.appendChild(row)
+      })
+    }
+
+    function buyItem(item){
+      if (state.coins < item.price) { alert('Not enough coins'); return }
+      state.coins -= item.price
+      state.owned[item.kind+'s'] = state.owned[item.kind+'s'] || []
+      if (!state.owned[item.kind+'s'].includes(item.id)) {
+        state.owned[item.kind+'s'].push(item.id)
+      }
+      // Do NOT auto-equip drums on purchase; just add the new button. Users can Equip manually.
+      saveState(state)
+      render()
+      renderShop()
+      // Keep shop open so user sees the item marked as Owned; show a small confirmation
+      const toast = document.createElement('div')
+      toast.textContent = 'Purchased!'
+      toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:8px 12px;border-radius:8px;z-index:9999'
+      document.body.appendChild(toast)
+      setTimeout(()=>toast.remove(),1200)
+    }
+
+    function equipItem(item){
+      state.equipped = state.equipped || { drum: null, hat: null, meme: null }
+      state.equipped[item.kind] = item.id
+      saveState(state)
+      render()
+      renderShop()
+    }
+
+    // Render play buttons for owned instruments at the bottom
+    function renderOwnedPlayButtons(){
+      const row = document.getElementById('ownedPlayRow')
+      row.innerHTML = ''
+      const ownedDrums = state.owned.drums || []
+      if (ownedDrums.length === 0){ row.style.display = 'none'; return }
+      row.style.display = 'flex'
+      ownedDrums.forEach(id => {
+        const it = SHOP_ITEMS.find(s => s.id === id)
+        const name = it ? it.name : id
+        const b = document.createElement('button')
+        b.className = 'small-play-btn'
+        // show only the instrument name on the small button
+        b.textContent = name
+        b.addEventListener('click', ()=>{
+          if(audioCtx.state === 'suspended') audioCtx.resume()
+          playInstrument(id)
+          face.classList.add('smile'); setTimeout(()=>face.classList.remove('smile'),160)
+          // award a coin for every play button
+          giveCoin(1)
+        })
+        row.appendChild(b)
+      })
+    }
+
+    // initial render
+    render()
+
+  // try to load any static audio samples from public/audio/
+  loadAllSamples().catch(e=>console.warn('loading static samples failed', e))
+
+    // expose for debugging
+    window._hr = { state, saveState, loadState }
+  </script>
+
+  <script>
+    // Register service worker for offline caching (if supported)
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').then(reg => {
+          console.log('Service worker registered:', reg.scope)
+
+          const showUpdateBanner = () => {
+            const banner = document.getElementById('updateBanner')
+            const reloadBtn = document.getElementById('reloadBtn')
+            if (!banner || !reloadBtn) return
+            banner.style.display = 'flex'
+            reloadBtn.onclick = () => {
+              // Ask the waiting worker to skipWaiting and activate
+              if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' })
+            }
+          }
+
+          // If there's already a waiting worker, show the banner
+          if (reg.waiting) {
+            showUpdateBanner()
+          }
+
+          // Listen for updates found (new service worker installing)
+          reg.addEventListener('updatefound', () => {
+            const inst = reg.installing
+            inst.addEventListener('statechange', () => {
+              if (inst.state === 'installed') {
+                // A new SW is installed. If there's a controller, show update banner.
+                if (navigator.serviceWorker.controller) showUpdateBanner()
+              }
+            })
+          })
+
+        }).catch(err => console.warn('SW registration failed:', err))
+
+        // When a new service worker takes control, reload to use the new version
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          window.location.reload()
+        })
+      })
+    }
+
+    // Note: Clear-cache debug button removed for security. To clear caches yourself:
+    // 1) Open DevTools -> Application -> Service Workers -> Unregister the service worker.
+    // 2) Application -> Storage -> Clear site data (this clears Cache Storage and Local Storage).
+    // Or run this in the Console:
+    // navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())); caches.keys().then(ks=>Promise.all(ks.map(k=>caches.delete(k)))); localStorage.removeItem('halloween-rock:v1')
+  </script>
+</body>
+</html>
