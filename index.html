@@ -29,6 +29,9 @@
   #drumImg{z-index:20}
   #armsImg{z-index:25}
   #bodyImg{z-index:10}
+  /* cymbal should sit above the character */
+  #cymbalImg{z-index:50}
+  #cymbalTapImg{z-index:60}
     .bottom{padding:14px;display:flex;justify-content:center}
   .play-row{display:flex;gap:8px;justify-content:center;align-items:center;flex-wrap:wrap;width:100%}
   .play-btn{background:var(--accent);border:0;padding:10px 14px;border-radius:10px;color:#111;font-weight:700}
@@ -71,7 +74,11 @@
           <img id="bodyImg" src="public/images/body.png" alt="body" />
           <img id="armsImg" src="public/images/arms.png" alt="arms" />
           <img id="drumImg" src="public/images/drum.png" alt="drum" />
+          <!-- cymbal sits above the drum and above the character when purchased -->
+          <img id="cymbalImg" src="public/images/cymbal.png" alt="cymbal" style="opacity:0;pointer-events:none" />
+          <!-- tapped overlay images (drum and cymbal); only one will be shown at a time -->
           <img id="drumTapImg" src="public/images/drum_tap.png" alt="drum tapped" style="opacity:0;pointer-events:none" />
+          <img id="cymbalTapImg" src="public/images/cymbal_tap.png" alt="cymbal tapped" style="opacity:0;pointer-events:none" />
           <img id="face" class="face" src="public/images/face.png" alt="face" />
         </div>
       </div>
@@ -103,10 +110,18 @@
   const coinCount = document.getElementById('coinCount')
     const face = document.getElementById('face')
   // drumPiece removed — we no longer show text below the figure
-    const openShop = document.getElementById('openShop')
-    const shopModal = document.getElementById('shopModal')
-    const closeShop = document.getElementById('closeShop')
-    const itemsList = document.getElementById('itemsList')
+  const openShop = document.getElementById('openShop')
+  const shopModal = document.getElementById('shopModal')
+  const closeShop = document.getElementById('closeShop')
+  const itemsList = document.getElementById('itemsList')
+  // stacked figure elements
+  const bodyImg = document.getElementById('bodyImg')
+  const armsImg = document.getElementById('armsImg')
+  const drumImg = document.getElementById('drumImg')
+  const cymbalImgEl = document.getElementById('cymbalImg')
+  const drumTapImg = document.getElementById('drumTapImg')
+  const cymbalTapImg = document.getElementById('cymbalTapImg')
+  const faceImg = document.getElementById('face')
   const playArea = document.querySelector('.play-area')
   const idleHint = document.createElement('div')
   idleHint.id = 'idleHint'
@@ -115,14 +130,14 @@
   // will be inserted into the play area
 
     const SHOP_ITEMS = [
-      { id: 'tom', kind:'drum', name:'Tom', price: 10, icon: 'public/images/icon_tom.png' },
-      { id: 'cymbal', kind:'drum', name:'Cymbal', price: 20, icon: 'public/images/icon_cymbal.png' },
-      { id: 'snare', kind:'drum', name:'Snare', price: 30, icon: 'public/images/icon_snare.png' },
-      { id: 'hat', kind:'hat', name:'Spooky Hat', price: 15 },
-      { id: 'meme1', kind:'meme', name:'Pumpkin Poster', price: 12 }
+      { id: 'tom', kind:'drum', name:'Tom', price: 0, icon: 'public/images/icon_tom.png' },
+      { id: 'cymbal', kind:'drum', name:'Cymbal', price: 0, icon: 'public/images/icon_cymbal.png' },
+      { id: 'snare', kind:'drum', name:'Snare', price: 0, icon: 'public/images/icon_snare.png' },
+      { id: 'hat', kind:'hat', name:'Spooky Hat', price: 0 },
+      { id: 'meme1', kind:'meme', name:'Pumpkin Poster', price: 0 }
     ]
 
-  function render(){ coinCount.textContent = state.coins; updateDrumVisual(); updateTapLabel(); renderOwnedPlayButtons() }
+  function render(){ coinCount.textContent = state.coins; updateDrumVisual(); updateTapLabel(); updateFigureImages(); renderOwnedPlayButtons() }
 
     function updateDrumVisual(){
       // No textual drum label shown in the UI any more.
@@ -132,6 +147,17 @@
     function updateTapLabel(){
       // No main tap button — label update is a no-op.
     }
+
+      // Update which images are shown in the stacked figure depending on equipped drum
+      function updateFigureImages(){
+        const equipped = state.equipped && state.equipped.drum
+        // always ensure drum base image is the drum
+        if (drumImg) drumImg.src = 'public/images/drum.png'
+        if (armsImg) armsImg.src = 'public/images/arms.png'
+    // show cymbal overlay only when the cymbal is equipped (which implies it was purchased)
+    const isEquippedCymbal = state.equipped && state.equipped.drum === 'cymbal'
+    if (cymbalImgEl) cymbalImgEl.style.opacity = isEquippedCymbal ? '1' : '0'
+      }
 
     // simple WebAudio hit (short noise + pitch)
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
@@ -213,6 +239,50 @@
       o.connect(g); g.connect(audioCtx.destination); o.start(); setTimeout(()=>o.stop(),160)
     }
 
+    // Play an instrument and show its tap visual (without permanently changing equipped state)
+    function playAndShow(id){
+      if (audioCtx.state === 'suspended') audioCtx.resume()
+      playInstrument(id)
+
+      // Visual tap effects: use separate drum/cymbal tap images and arms
+      const faceEl = document.getElementById('face')
+      // hide both taps first
+      if (drumTapImg) drumTapImg.style.opacity = '0'
+      if (cymbalTapImg) cymbalTapImg.style.opacity = '0'
+
+      if (id === 'cymbal'){
+        // ensure cymbal base is visible during the tap (remember previous state)
+        const prevCymbalVisible = cymbalImgEl && cymbalImgEl.style.opacity === '1'
+        if (cymbalImgEl) cymbalImgEl.style.opacity = '1'
+        if (cymbalTapImg) { cymbalTapImg.style.transition = 'opacity 120ms ease'; cymbalTapImg.style.opacity = '1' }
+        // hide base so the tap image appears to replace it
+        if (cymbalImgEl) cymbalImgEl.style.opacity = '0'
+        if (armsImg) { armsImg.src = 'public/images/arms_cymbal.png' }
+        if (faceEl) { faceEl.classList.add('smile') }
+        setTimeout(()=>{
+          if (cymbalTapImg) cymbalTapImg.style.opacity = '0'
+          // restore cymbal base visibility only if it was previously visible (equipped)
+          if (cymbalImgEl) cymbalImgEl.style.opacity = prevCymbalVisible ? '1' : '0'
+          if (armsImg) armsImg.src = 'public/images/arms.png'
+          if (faceEl) faceEl.classList.remove('smile')
+        }, 180)
+      } else {
+        // If a cymbal overlay is present (equipped), temporarily hide it so the drum tap shows
+        const prevCymbalVisible = cymbalImgEl && cymbalImgEl.style.opacity === '1'
+        if (prevCymbalVisible && cymbalImgEl) cymbalImgEl.style.opacity = '0'
+        if (drumTapImg) { drumTapImg.style.transition = 'opacity 120ms ease'; drumTapImg.style.opacity = '1' }
+        if (faceEl) { faceEl.classList.add('smile') }
+        setTimeout(()=>{
+          if (drumTapImg) drumTapImg.style.opacity = '0'
+          if (faceEl) faceEl.classList.remove('smile')
+          if (prevCymbalVisible && cymbalImgEl) cymbalImgEl.style.opacity = '1'
+        }, 140)
+      }
+
+      // award coin and reset idle
+      giveCoin(1)
+    }
+
     function giveCoin(n=1){ state.coins = (state.coins||0) + n; saveState(state); render(); showCoinAnimation(n) }
 
     function showCoinAnimation(n=1){
@@ -246,17 +316,8 @@
         // ignore if the user tapped a button
         if (e.target && e.target.closest && e.target.closest('button')) return
         if (audioCtx.state === 'suspended') audioCtx.resume()
-        playInstrument('basic')
-        // quick tapped-drum visual: fade in the tapped drum image then hide it
-        const tapImg = document.getElementById('drumTapImg')
-        if (tapImg) {
-          tapImg.style.transition = 'opacity 120ms ease'
-          tapImg.style.opacity = '1'
-          setTimeout(()=>{ tapImg.style.opacity = '0' }, 140)
-        }
-        const faceEl = document.getElementById('face')
-        if (faceEl) { faceEl.classList.add('smile'); setTimeout(()=>faceEl.classList.remove('smile'),160) }
-        giveCoin(1)
+        // Tapping the central play area should always produce the basic drum
+        playAndShow('basic')
         hideIdleHint()
         resetIdleTimer()
       })
@@ -296,7 +357,11 @@
       if (!state.owned[item.kind+'s'].includes(item.id)) {
         state.owned[item.kind+'s'].push(item.id)
       }
-      // Do NOT auto-equip drums on purchase; just add the new button. Users can Equip manually.
+      // Auto-equip drums on purchase so the figure immediately reflects the new instrument
+      if (item.kind === 'drum') {
+        state.equipped = state.equipped || { drum: null, hat: null, meme: null }
+        state.equipped.drum = item.id
+      }
       saveState(state)
       render()
       renderShop()
@@ -344,11 +409,8 @@
         }
 
         b.addEventListener('click', ()=>{
-          if(audioCtx.state === 'suspended') audioCtx.resume()
-          playInstrument(id)
-          face.classList.add('smile'); setTimeout(()=>face.classList.remove('smile'),160)
-          // award a coin for every play button
-          giveCoin(1)
+          // Play the instrument and show its tap visual (may temporarily change arms for cymbal)
+          playAndShow(id)
         })
         row.appendChild(b)
       })
