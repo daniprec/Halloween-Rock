@@ -3,14 +3,28 @@ const CACHE_NAME = 'halloween-rock-v2'
 // Use relative paths in the precache so the service worker works under a repo subpath (GH Pages)
 const PRECACHE_URLS = [
   'index.html',
-  'public/images/face.png'
+  'public/images/face.png',
+  // optional audio sample - will be fetched and cached only if present
+  'public/audio/drum.wav'
 ]
 
 self.addEventListener('install', event => {
   self.skipWaiting()
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(PRECACHE_URLS))
-  )
+  // Precache only the assets that are reachable (don't fail install if some are missing)
+  event.waitUntil((async () => {
+    const cache = await caches.open(CACHE_NAME)
+    for (const url of PRECACHE_URLS) {
+      try {
+        const resp = await fetch(url)
+        if (resp && resp.ok) {
+          await cache.put(url, resp.clone())
+        }
+      } catch (e) {
+        // ignore missing resources (e.g., optional audio not yet added to repo)
+        console.warn('SW precache skip', url, e && e.message)
+      }
+    }
+  })())
 })
 
 self.addEventListener('activate', event => {
