@@ -79,6 +79,20 @@ Automate these in GitHub Actions. Block merges on failing checks.
 
 Note: Keep `deploy-supabase.yml` gated (manual approval) if migrations are destructive.
 
+### Lockfile recommendation
+
+For deterministic installs and to avoid CI failures, commit a lockfile (`package-lock.json` or `npm-shrinkwrap.json`) to the repository. Many CI workflows (and `npm ci`) expect a lockfile; without it `npm ci` will fail with an EUSAGE error. Recommended steps:
+
+```powershell
+cd C:\path\to\repo
+npm install --package-lock-only   # creates package-lock.json without installing node_modules
+git add package-lock.json
+git commit -m "chore: add package-lock.json for CI"
+git push origin main
+```
+
+If you prefer not to commit a lockfile, ensure your CI workflows fall back to `npm install` when a lockfile is missing. This is less deterministic but prevents the CI `npm ci` error.
+
 ---
 
 ## Secrets & environment variables

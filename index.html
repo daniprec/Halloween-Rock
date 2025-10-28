@@ -115,13 +115,14 @@
     // simple WebAudio hit (short noise + pitch)
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
 
-    // Static-sample loader: tries /public/audio/<id>.(wav|mp3|ogg|m4a) and decodes into `samples`
+    // Static-sample loader: tries public/audio/<id>.(wav|mp3|ogg|m4a) (relative paths)
     const samples = {} // id -> AudioBuffer
     const SAMPLE_EXTS = ['wav','mp3','ogg','m4a']
 
     async function loadSampleIfExists(id){
       for (const ext of SAMPLE_EXTS){
-        const url = `/public/audio/${id}.${ext}`
+        // Use a relative path so this works on GitHub Pages and other subpath hosts
+        const url = `public/audio/${id}.${ext}`
         try{
           const res = await fetch(url)
           if (!res.ok) continue
@@ -290,7 +291,8 @@
     // Register service worker for offline caching (if supported)
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js').then(reg => {
+  // register the service worker using a relative path so scope respects the current base
+  navigator.serviceWorker.register('sw.js').then(reg => {
           console.log('Service worker registered:', reg.scope)
 
           const showUpdateBanner = () => {
