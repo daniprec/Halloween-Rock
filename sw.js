@@ -5,7 +5,9 @@ const PRECACHE_URLS = [
   'index.html',
   'public/images/face.png',
   // optional audio sample - will be fetched and cached only if present
-  'public/audio/drum.wav'
+  'public/audio/drum.wav',
+  // tom sample (precache so it's available offline on install)
+  'public/audio/tom.wav'
 ]
 
 self.addEventListener('install', event => {
