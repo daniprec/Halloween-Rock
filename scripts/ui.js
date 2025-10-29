@@ -30,7 +30,7 @@ export function initializeUI() {
   idleHint = document.createElement('div');
   idleHint.id = 'idleHint';
   idleHint.className = 'idle-hint';
-  idleHint.textContent = 'Tap to drum!';
+  idleHint.textContent = '¡Pulsa los botones de abajo!';
   playArea.appendChild(idleHint);
 }
 
@@ -136,7 +136,7 @@ export function renderShop(state) {
     if (it.kind === 'drum' && (state.owned.drums || []).includes(it.id)) {
       return;
     }
-    
+
     const row = document.createElement('div');
     row.className = 'item';
     
