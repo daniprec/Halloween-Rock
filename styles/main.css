@@ -136,8 +136,16 @@ body {
   z-index: 27;
 }
 
+#armLeftTomImg {
+  z-index: 28;
+}
+
 #armRightImg {
   z-index: 26;
+}
+
+#armRightTomImg {
+  z-index: 29;
 }
 
 #bodyImg {
@@ -159,6 +167,14 @@ body {
 
 #cymbalTapImg {
   z-index: 60;
+}
+
+#tomImg {
+  z-index: 50;
+}
+
+#tomTapImg {
+  z-index: 51;
 }
 
 .bottom {

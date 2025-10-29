@@ -4,10 +4,10 @@ import { SHOP_ITEMS, saveState, buyItem as stateBuyItem, equipItem as stateEquip
 // DOM element references
 let coinCount, face, openShop, shopModal, closeShop, itemsList;
 let faceImg, bodyImg;
-let armRightImg, armLeftImg, armLeftCymbalImg;
+let armRightImg, armLeftImg;
 let drumImg, drumTapImg;
-let cymbalImg, cymbalTapImg;
-let tomImg, tomTapImg;
+let cymbalImg, cymbalTapImg, armLeftCymbalImg;
+let tomImg, tomTapImg, armLeftTomImg, armRightTomImg;
 let snareImg, snareTapImg;
 let playArea, idleHint;
 
@@ -22,11 +22,17 @@ export function initializeUI() {
   bodyImg = document.getElementById('bodyImg');
   armRightImg = document.getElementById('armRightImg');
   armLeftImg = document.getElementById('armLeftImg');
-  armLeftCymbalImg = document.getElementById('armLeftCymbalImg');
   drumImg = document.getElementById('drumImg');
   drumTapImg = document.getElementById('drumTapImg');
   cymbalImg = document.getElementById('cymbalImg');
   cymbalTapImg = document.getElementById('cymbalTapImg');
+  armLeftCymbalImg = document.getElementById('armLeftCymbalImg');
+  tomImg = document.getElementById('tomImg');
+  tomTapImg = document.getElementById('tomTapImg');
+  armLeftTomImg = document.getElementById('armLeftTomImg');
+  armRightTomImg = document.getElementById('armRightTomImg');
+  snareImg = document.getElementById('snareImg');
+  snareTapImg = document.getElementById('snareTapImg');
   faceImg = document.getElementById('face');
   playArea = document.querySelector('.play-area');
   
@@ -56,6 +62,8 @@ function updateFigureImages(state) {
   if (cymbalTapImg) cymbalTapImg.style.opacity = '0';
   if (armLeftCymbalImg) armLeftCymbalImg.style.opacity = '0';
   if (tomTapImg) tomTapImg.style.opacity = '0';
+  if (armLeftTomImg) armLeftTomImg.style.opacity = '0';
+  if (armRightTomImg) armRightTomImg.style.opacity = '0';
   if (snareTapImg) snareTapImg.style.opacity = '0';
   // Reset opacities to max
   if (armLeftImg) armLeftImg.style.opacity = '1';
@@ -120,6 +128,10 @@ export function showTapVisual(id) {
   } else if (id === 'tom' ) {
     if (tomImg) tomImg.style.opacity = '0';
     if (tomTapImg) tomTapImg.style.opacity = '1';
+    if (armLeftImg) armLeftImg.style.opacity = '0';
+    if (armLeftTomImg) armLeftTomImg.style.opacity = '1';
+    if (armRightImg) armRightImg.style.opacity = '0';
+    if (armRightTomImg) armRightTomImg.style.opacity = '1';
   } else if (id === 'snare' ) {
     if (snareImg) snareImg.style.opacity = '0';
     if (snareTapImg) snareTapImg.style.opacity = '1';
