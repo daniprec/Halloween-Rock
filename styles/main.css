@@ -136,8 +136,16 @@ body {
   z-index: 20;
 }
 
-#armsImg {
+#armLeftImg {
   z-index: 25;
+}
+
+#armLeftCymbalImg {
+  z-index: 27;
+}
+
+#armRightImg {
+  z-index: 26;
 }
 
 #bodyImg {
