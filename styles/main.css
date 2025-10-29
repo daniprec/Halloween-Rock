@@ -212,7 +212,7 @@ button {
   border: 1px solid rgba(255, 255, 255, 0.06);
   padding: 8px 12px;
   border-radius: 10px;
-  color: var(--grey);
+  color: var(--black);
 }
 
 /* modal */
@@ -260,7 +260,7 @@ button {
 
 .small {
   font-size: 12px;
-  color: var(--grey);
+  color: var(--white);
 }
 
 .coin-fly {
