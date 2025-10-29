@@ -24,7 +24,8 @@ function playAndShow(id) {
   
   playInstrument(id);
   showTapVisual(id);
-  
+  hideIdleHint();
+  resetIdleTimer();
   // Award coin
   giveCoin(state, 1);
   saveState(state);
@@ -60,16 +61,6 @@ function init() {
   
   closeShop.addEventListener('click', () => {
     closeShopModal();
-  });
-  
-  // Play area tap handler
-  playArea.addEventListener('pointerdown', (e) => {
-    // Ignore if user tapped a button
-    if (e.target && e.target.closest && e.target.closest('button')) return;
-    
-    playAndShow('basic');
-    hideIdleHint();
-    resetIdleTimer();
   });
   
   // Owned instrument play buttons (event delegation)
