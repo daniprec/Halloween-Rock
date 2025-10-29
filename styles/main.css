@@ -148,6 +148,10 @@ body {
   z-index: 29;
 }
 
+#armRightSnareImg {
+  z-index: 30;
+}
+
 #bodyImg {
   z-index: 10;
 }
@@ -175,6 +179,14 @@ body {
 
 #tomTapImg {
   z-index: 51;
+}
+
+#snareImg {
+  z-index: 52;
+}
+
+#snareTapImg {
+  z-index: 53;
 }
 
 .bottom {

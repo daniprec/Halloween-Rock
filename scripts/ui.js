@@ -8,7 +8,7 @@ let armRightImg, armLeftImg;
 let drumImg, drumTapImg;
 let cymbalImg, cymbalTapImg, armLeftCymbalImg;
 let tomImg, tomTapImg, armLeftTomImg, armRightTomImg;
-let snareImg, snareTapImg;
+let snareImg, snareTapImg, armRightSnareImg;
 let playArea, idleHint;
 
 // Initialize DOM references
@@ -33,6 +33,7 @@ export function initializeUI() {
   armRightTomImg = document.getElementById('armRightTomImg');
   snareImg = document.getElementById('snareImg');
   snareTapImg = document.getElementById('snareTapImg');
+  armRightSnareImg = document.getElementById('armRightSnareImg');
   faceImg = document.getElementById('face');
   playArea = document.querySelector('.play-area');
   
@@ -65,6 +66,7 @@ function updateFigureImages(state) {
   if (armLeftTomImg) armLeftTomImg.style.opacity = '0';
   if (armRightTomImg) armRightTomImg.style.opacity = '0';
   if (snareTapImg) snareTapImg.style.opacity = '0';
+  if (armRightSnareImg) armRightSnareImg.style.opacity = '0';
   // Reset opacities to max
   if (armLeftImg) armLeftImg.style.opacity = '1';
   if (armRightImg) armRightImg.style.opacity = '1';
@@ -135,6 +137,8 @@ export function showTapVisual(id) {
   } else if (id === 'snare' ) {
     if (snareImg) snareImg.style.opacity = '0';
     if (snareTapImg) snareTapImg.style.opacity = '1';
+    if (armRightImg) armRightImg.style.opacity = '0';
+    if (armRightSnareImg) armRightSnareImg.style.opacity = '1';
   }
 }
 
