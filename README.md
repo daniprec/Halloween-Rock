@@ -36,3 +36,76 @@ Shop modal:
 ## Sounds
 
 Downloaded from https://samplefocus.com/
+
+## Project Structure
+
+The project follows a modular architecture for better maintainability:
+
+```
+Halloween-Rock/
+├── index.html              # Main HTML structure (minimal, clean)
+├── sw.js                   # Service worker for offline support and caching
+├── package.json            # Project metadata and scripts
+├── styles/
+│   └── main.css           # All visual styles and animations
+├── scripts/
+│   ├── state.js           # State management and localStorage persistence
+│   ├── audio.js           # Audio context, sample loading, and playback
+│   ├── ui.js              # DOM manipulation, rendering, and animations
+│   └── main.js            # Application initialization and event coordination
+└── public/
+    ├── audio/             # Sound samples (.wav, .mp3, .ogg, .m4a)
+    └── images/            # Character sprites, icons, and visual assets
+```
+
+### Module Descriptions
+
+**`index.html`**
+- Minimal HTML structure with semantic markup
+- Links to external CSS and JavaScript modules
+- Contains service worker registration for PWA support
+
+**`styles/main.css`**
+- All CSS styles extracted for better organization
+- CSS custom properties for theming (colors, spacing)
+- Responsive design for mobile-first experience
+- Animations for coin fly, tap effects, and transitions
+
+**`scripts/state.js`**
+- State management with localStorage persistence
+- Shop items configuration (drums, hats, memes)
+- Business logic for buying and equipping items
+- Coin management functions
+
+**`scripts/audio.js`**
+- AudioContext initialization and management
+- Dynamic sample loading from multiple formats
+- Fallback synthesized sounds when samples unavailable
+- Playback functions for each instrument
+
+**`scripts/ui.js`**
+- DOM element references and initialization
+- Rendering functions for coins, shop, and instruments
+- Visual feedback animations (tap effects, coin fly)
+- Idle hint timer to encourage user interaction
+- Shop modal management
+
+**`scripts/main.js`**
+- Application entry point
+- Module coordination and initialization
+- Event listener setup for user interactions
+- Exports debug helpers to window object
+
+**`sw.js`**
+- Service worker for offline functionality
+- Precaches essential assets for instant loading
+- Cache-first strategy with network fallback
+- Automatic update detection and reload prompts
+
+## Testing
+
+To run locally, you need a local server due to the use of ES6 modules and the AudioContext API. You can use a simple Python server:
+
+```bash
+python -m http.server 8000
+```
