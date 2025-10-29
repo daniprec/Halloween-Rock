@@ -154,7 +154,8 @@ body {
 }
 
 .bottom {
-  padding: 14px;
+  /* reduce vertical padding so buttons sit slightly higher on the screen */
+  padding: 8px 14px;
   display: flex;
   justify-content: center;
 }
