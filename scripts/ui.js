@@ -47,10 +47,16 @@ function updateFigureImages(state) {
   if (face && face.classList.contains('smile')) {
     face.classList.remove('smile');
   } 
-  // Reset opacities to 100
+  // Reset opacities to max
   if (armsImg) armsImg.style.opacity = '1';
   if (drumImg) drumImg.style.opacity = '1';
-  if (cymbalImg) cymbalImg.style.opacity = '1';
+  // Opacity of the other instruments depends on ownership
+  const ownedDrums = state.owned.drums || [];
+  if (ownedDrums.includes('cymbal')) {
+    if (cymbalImg) cymbalImg.style.opacity = '1';
+  } else {
+    if (cymbalImg) cymbalImg.style.opacity = '0.25';
+  }
 }
 
 // Coin animation
@@ -91,7 +97,7 @@ export function showTapVisual(id) {
       if (armsCymbalImg) armsCymbalImg.style.opacity = '0';
       if (cymbalTapImg) cymbalTapImg.style.opacity = '0';
     }, 180);
-  } else {
+  } else if (id === 'kick') {
     if (face) face.classList.add('smile');
     if (drumImg) drumImg.style.opacity = '0';
     if (drumTapImg) drumTapImg.style.opacity = '1';
@@ -126,6 +132,11 @@ export function renderShop(state) {
   itemsList.innerHTML = '';
   
   SHOP_ITEMS.forEach(it => {
+    // If the item is a drum and the user owns it, skip showing it in the shop
+    if (it.kind === 'drum' && (state.owned.drums || []).includes(it.id)) {
+      return;
+    }
+    
     const row = document.createElement('div');
     row.className = 'item';
     
@@ -194,13 +205,8 @@ function renderOwnedPlayButtons(state) {
   row.innerHTML = '';
   
   const ownedDrums = state.owned.drums || [];
-  if (ownedDrums.length === 0) {
-    row.style.display = 'none';
-    return;
-  }
-  
-  row.style.display = 'flex';
-  
+
+
   ownedDrums.forEach(id => {
     const it = SHOP_ITEMS.find(s => s.id === id);
     const name = it ? it.name : id;
