@@ -128,14 +128,6 @@ body {
   z-index: 40;
 }
 
-#drumTapImg {
-  z-index: 30;
-}
-
-#drumImg {
-  z-index: 20;
-}
-
 #armLeftImg {
   z-index: 25;
 }
@@ -152,9 +144,17 @@ body {
   z-index: 10;
 }
 
+#drumTapImg {
+  z-index: 41;
+}
+
+#drumImg {
+  z-index: 40;
+}
+
 /* cymbal should sit above the character */
 #cymbalImg {
-  z-index: 50;
+  z-index: 59;
 }
 
 #cymbalTapImg {
