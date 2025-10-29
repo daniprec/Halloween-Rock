@@ -109,3 +109,11 @@ To run locally, you need a local server due to the use of ES6 modules and the Au
 ```bash
 python -m http.server 8000
 ```
+
+## Credits
+
+Code: ChatGPT-5
+
+Music samples: [SampleFocus.com](https://samplefocus.com/)
+
+Doodles: Daniel Precioso

@@ -1,8 +1,193 @@
-# CI/CD & Deployment Pipeline — Halloween Rock
+# Development Guide — Halloween Rock
 
-This document describes a complete, cost-efficient pipeline for the "Halloween Rock" project using a static frontend (Cloudflare Pages / Vercel) and a lightweight Supabase backend (Postgres + Edge Functions). It lists automated checks, manual runbook steps, rollback behaviour, and party-day verification checks.
+This document covers the project's modular architecture, refactoring history, and deployment pipeline.
 
-## Goals
+---
+
+## Table of Contents
+1. [Project Structure](#project-structure)
+2. [Refactoring Overview](#refactoring-overview)
+3. [CI/CD & Deployment Pipeline](#cicd--deployment-pipeline)
+
+---
+
+## Project Structure
+
+### File Structure
+```
+Halloween-Rock/
+├── index.html              (cleaned up - only HTML structure)
+├── styles/
+│   └── main.css           (all CSS styles)
+├── scripts/
+│   ├── state.js           (state management & localStorage)
+│   ├── audio.js           (audio context & sample loading)
+│   ├── ui.js              (DOM manipulation & rendering)
+│   └── main.js            (app initialization)
+├── sw.js                  (updated cache list)
+└── public/
+    ├── audio/
+    └── images/
+```
+
+### Module Breakdown
+
+#### `scripts/state.js`
+- State management and persistence
+- localStorage operations (load/save)
+- Shop items configuration
+- Business logic for buying and equipping items
+
+#### `scripts/audio.js`
+- AudioContext initialization
+- Sample loading from public/audio/
+- Playback functions (samples + synthesized fallback)
+- Audio file format detection (.wav, .mp3, .ogg, .m4a)
+
+#### `scripts/ui.js`
+- DOM element references
+- Rendering functions
+- Visual animations (coin fly, tap effects)
+- Shop modal management
+- Idle hint timer
+
+#### `scripts/main.js`
+- Application initialization
+- Event listener setup
+- Module coordination
+- Entry point for the app
+
+#### `styles/main.css`
+- All CSS extracted from inline `<style>` tag
+- Properly formatted and readable
+- Unchanged styling - just reorganized
+
+---
+
+## Refactoring Overview
+
+The Halloween Rock project has been refactored from a single-file structure to a modular architecture for improved maintainability.
+
+## Changes Made
+
+### File Structure
+```
+Halloween-Rock/
+├── index.html              (cleaned up - only HTML structure)
+├── styles/
+│   └── main.css           (all CSS styles)
+├── scripts/
+│   ├── state.js           (state management & localStorage)
+│   ├── audio.js           (audio context & sample loading)
+│   ├── ui.js              (DOM manipulation & rendering)
+│   └── main.js            (app initialization)
+├── sw.js                  (updated cache list)
+└── public/
+    ├── audio/
+    └── images/
+```
+
+### Module Breakdown
+
+#### `scripts/state.js`
+- State management and persistence
+- localStorage operations (load/save)
+- Shop items configuration
+- Business logic for buying and equipping items
+
+#### `scripts/audio.js`
+- AudioContext initialization
+- Sample loading from public/audio/
+- Playback functions (samples + synthesized fallback)
+- Audio file format detection (.wav, .mp3, .ogg, .m4a)
+
+#### `scripts/ui.js`
+- DOM element references
+- Rendering functions
+- Visual animations (coin fly, tap effects)
+- Shop modal management
+- Idle hint timer
+
+#### `scripts/main.js`
+- Application initialization
+- Event listener setup
+- Module coordination
+- Entry point for the app
+
+#### `styles/main.css`
+- All CSS extracted from inline `<style>` tag
+- Properly formatted and readable
+- Unchanged styling - just reorganized
+
+### Service Worker Updates
+- Cache name bumped to `v3`
+- Added new files to precache:
+  - `styles/main.css`
+  - `scripts/state.js`
+  - `scripts/audio.js`
+  - `scripts/ui.js`
+  - `scripts/main.js`
+
+## Benefits
+
+### Maintainability
+- ✅ Separation of concerns (state, UI, audio)
+- ✅ Easier to debug specific features
+- ✅ Clear module responsibilities
+
+### Scalability
+- ✅ Easy to add new features to specific modules
+- ✅ Can test modules independently
+- ✅ Better code reusability
+
+### Development Experience
+- ✅ Better syntax highlighting in editors
+- ✅ Cleaner git diffs (changes isolated to specific files)
+- ✅ Easier code navigation
+
+### Performance
+- ✅ Better browser caching (unchanged files stay cached)
+- ✅ Smaller updates when only one module changes
+- ✅ ES6 modules enable potential tree-shaking in future
+
+## Compatibility
+
+### GitHub Pages
+- ✅ No changes required to deployment
+- ✅ All paths remain relative
+- ✅ Service worker properly configured
+
+### Browser Support
+- ES6 modules used (`type="module"`)
+- Supported by all modern browsers
+- Same browser support as before (AudioContext, etc.)
+
+## Testing Checklist
+Before pushing to production:
+- [ ] Test basic drum tap functionality
+- [ ] Test coin earning
+- [ ] Test shop modal (open/close)
+- [ ] Test buying items
+- [ ] Test equipping items
+- [ ] Test owned instrument buttons
+- [ ] Test audio playback (samples + fallback)
+- [ ] Test service worker update banner
+- [ ] Test offline functionality
+
+## Next Steps (Optional)
+Future improvements could include:
+- Add unit tests for state.js
+- Add JSDoc comments for better IDE support
+- Consider bundler (Vite/Parcel) for production optimization
+- Add TypeScript for type safety
+
+---
+
+## CI/CD & Deployment Pipeline
+
+This section describes a complete, cost-efficient pipeline for the "Halloween Rock" project using a static frontend (Cloudflare Pages / Vercel) and a lightweight Supabase backend (Postgres + Edge Functions). It lists automated checks, manual runbook steps, rollback behaviour, and party-day verification checks.
+
+### Goals
 
 - Fast, reliable deploys from commits/PRs
 - Pre-merge automated checks (build, lint, unit tests)
@@ -10,16 +195,14 @@ This document describes a complete, cost-efficient pipeline for the "Halloween R
 - Simple rollback and monitoring
 - Minimal monthly cost and low operational overhead
 
-## Components
+### Components
 
 - Frontend: SPA (Svelte/Preact or vanilla JS) built with Vite and deployed to Cloudflare Pages (or Vercel)
 - Backend: Supabase (Postgres) for optional cross-device persistence + Edge Functions for server-side endpoints
 - CI: GitHub Actions
 - Secrets: stored in GitHub Actions Secrets and Supabase project settings
 
----
-
-## Branching & Git workflow
+### Branching & Git workflow
 
 - `main` — production (auto-deploy)
 - `staging` — optional preview staging (auto-deploy preview)
@@ -29,9 +212,7 @@ PR flow:
 
 - Developers open PR -> CI runs checks -> reviewers approve -> merge to `main` triggers deployment
 
----
-
-## Pre-merge (PR) checks — REQUIRED
+### Pre-merge (PR) checks — REQUIRED
 
 These checks must pass before merging any PR to `main`.
 
@@ -44,9 +225,7 @@ These checks must pass before merging any PR to `main`.
 
 Automate these in GitHub Actions. Block merges on failing checks.
 
----
-
-## CI Workflows (recommended names)
+### CI Workflows (recommended names)
 
 1) `ci.yml` — Runs on PRs
 
@@ -79,7 +258,7 @@ Automate these in GitHub Actions. Block merges on failing checks.
 
 Note: Keep `deploy-supabase.yml` gated (manual approval) if migrations are destructive.
 
-### Lockfile recommendation
+#### Lockfile recommendation
 
 For deterministic installs and to avoid CI failures, commit a lockfile (`package-lock.json` or `npm-shrinkwrap.json`) to the repository. Many CI workflows (and `npm ci`) expect a lockfile; without it `npm ci` will fail with an EUSAGE error. Recommended steps:
 
@@ -93,9 +272,7 @@ git push origin main
 
 If you prefer not to commit a lockfile, ensure your CI workflows fall back to `npm install` when a lockfile is missing. This is less deterministic but prevents the CI `npm ci` error.
 
----
-
-## Secrets & environment variables
+### Secrets & environment variables
 
 - `SUPABASE_URL` (client) — public
 - `SUPABASE_ANON_KEY` (client) — public-limited (use for client SDK)
@@ -105,9 +282,7 @@ If you prefer not to commit a lockfile, ensure your CI workflows fall back to `n
 
 Only use service-role secrets in CI steps that run server-side logic (migrations, function deploy). Never expose them in client bundles.
 
----
-
-## Deploy checks (post-deploy)
+### Deploy checks (post-deploy)
 
 After a successful deploy, run this checklist automatically (if possible) or manually:
 
@@ -121,9 +296,7 @@ After a successful deploy, run this checklist automatically (if possible) or man
 
 Automate these as a post-deploy job in `deploy-frontend.yml`/`deploy-supabase.yml` wherever possible.
 
----
-
-## Acceptance & Quality Gates (Green-before-Done)
+### Acceptance & Quality Gates (Green-before-Done)
 
 Before declaring a release ready for the party (production), ensure these gates PASS:
 
@@ -136,17 +309,13 @@ Before declaring a release ready for the party (production), ensure these gates 
 
 If any gate fails, revert the merge or block the deployment until fixed.
 
----
-
-## Rollback strategy
+### Rollback strategy
 
 - Frontend: Cloudflare Pages / Vercel provide previous deploys — revert to last known good build via provider UI or trigger redeploy of a tagged commit.
 - Supabase DB migrations: design migrations to be reversible where possible. If a destructive migration is applied, have a DB backup snapshot or rely on point-in-time recovery (PITR) if enabled.
 - If Edge Function introduces breaking behavior, disable the function via Supabase dashboard and roll back code.
 
----
-
-## Monitoring & Alerts
+### Monitoring & Alerts
 
 - Monitor Cloudflare Pages / Vercel uptime and logs
 - Monitor Supabase Edge Function invocations and errors
@@ -157,9 +326,7 @@ If any gate fails, revert the merge or block the deployment until fixed.
 
 Supabase dashboard and Cloudflare provide metrics; connect to Slack or email alerts for party reliability.
 
----
-
-## Party-day runbook (quick checklist)
+### Party-day runbook (quick checklist)
 
 - [ ] Deploy latest `main` and confirm post-deploy checks succeeded
 - [ ] Generate QR codes pointing to the production URL (shorten if desired)
@@ -173,71 +340,60 @@ If anything fails on the party day, fallback options:
 - Serve a local hotspot with the built site hosted on a tiny device (optional)
 - Switch to a pre-built offline demo page (single file) that demonstrates the core experience without backend
 
----
-
-## Security & Abuse mitigations (party scale)
+### Security & Abuse mitigations (party scale)
 
 - Rate-limit `/edge/sync` by IP and by playerId
 - Sanitize user-provided names before writing to the leaderboard
 - Rotate `SUPABASE_SERVICE_ROLE_KEY` if leaked
 
----
-
-## Local developer commands (examples - PowerShell)
+### Local developer commands (examples - PowerShell)
 
 These assume a Vite/Svelte or Vite/Preact scaffold.
 
 ```powershell
- # install deps
- npm install
+# install deps
+npm install
 
- # dev server
- npm run dev
+# dev server
+npm run dev
 
- # run lint
- npm run lint
+# run lint
+npm run lint
 
- # run unit tests
- npm test
+# run unit tests
+npm test
 
- # production build
- npm run build
+# production build
+npm run build
 
- # preview production build locally
- npm run preview
+# preview production build locally
+npm run preview
 ```
 
 Supabase CLI quick commands (install per platform):
 
 ```powershell
- # login and link project
- supabase login
- supabase link --project-ref <PROJECT_REF>
+# login and link project
+supabase login
+supabase link --project-ref <PROJECT_REF>
 
- # run migrations
- supabase db push
+# run migrations
+supabase db push
 
- # deploy Edge Functions
- supabase functions deploy sync
+# deploy Edge Functions
+supabase functions deploy sync
 ```
 
----
-
-## Useful GitHub Actions / Implementation notes
+### Useful GitHub Actions / Implementation notes
 
 - Use the official Cloudflare Pages Action or Vercel Action for deployment
 - Use `supabase/cli-action` or run `npm i -g supabase` in CI to deploy migrations and functions
 - Keep the `deploy-supabase.yml` workflow manual if you expect to run migrations only on demand
 
----
-
-## Appendix: Quick PR checklist (copy into PR template)
+### Quick PR checklist (copy into PR template)
 
 - [ ] I added tests for any new behavior
-- [ ] I updated documentation where necessary (README / PIPELINE.md)
+- [ ] I updated documentation where necessary (README / Development Guide)
 - [ ] Local dev tested: build, run, and smoke-tested on mobile
 - [ ] No sensitive keys in code
 
----
-
-End of pipeline document. If you'd like, I can now scaffold the GitHub Actions workflows referenced here (CI, deploy-frontend, deploy-supabase) and a sample PWA-ready frontend scaffold. Which should I scaffold next? (A: full Svelte + workflows, B: vanilla single-file prototype + workflows, C: only workflows and SQL migrations)
