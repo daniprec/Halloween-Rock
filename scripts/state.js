@@ -10,10 +10,10 @@ const defaultState = {
 
 // Shop items configuration
 export const SHOP_ITEMS = [
-  { id: 'kick', kind: 'drum', name: 'Kick Drum', price: 0, icon: 'public/images/icon_kick.png' },
-  { id: 'tom', kind: 'drum', name: 'Tom', price: 0, icon: 'public/images/icon_tom.png' },
-  { id: 'cymbal', kind: 'drum', name: 'Cymbal', price: 0, icon: 'public/images/icon_cymbal.png' },
-  { id: 'snare', kind: 'drum', name: 'Snare', price: 0, icon: 'public/images/icon_snare.png' },
+  { id: 'kick', kind: 'drum', name: 'Bombo', price: 0, icon: 'public/images/icon_kick.png', sample: 'public/audio/kick.wav' },
+  { id: 'tom', kind: 'drum', name: 'Tom', price: 0, icon: 'public/images/icon_tom.png', sample: 'public/audio/tom.wav' },
+  { id: 'cymbal', kind: 'drum', name: 'Plato', price: 0, icon: 'public/images/icon_cymbal.png', sample: 'public/audio/cymbal.wav' },
+  { id: 'snare', kind: 'drum', name: 'Caja', price: 0, icon: 'public/images/icon_snare.png', sample: 'public/audio/snare.wav' },
   { id: 'hat', kind: 'hat', name: 'Spooky Hat', price: 0 },
   { id: 'meme1', kind: 'meme', name: 'Pumpkin Poster', price: 0 }
 ];
