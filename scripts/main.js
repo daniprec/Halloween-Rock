@@ -21,15 +21,16 @@ let state = loadState();
 function playAndShow(id) {
   const audioCtx = getAudioContext();
   if (audioCtx.state === 'suspended') audioCtx.resume();
-  
   playInstrument(id);
   showTapVisual(id);
-  hideIdleHint();
-  resetIdleTimer();
   // Award coin
   giveCoin(state, 1);
-  saveState(state);
   showCoinAnimation(1);
+  // Remove idle hint
+  hideIdleHint();
+  resetIdleTimer();
+  // Save state
+  saveState(state);
   // Revert after 180ms
   setTimeout(() => {
     render(state);
