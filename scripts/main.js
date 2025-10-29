@@ -28,8 +28,11 @@ function playAndShow(id) {
   // Award coin
   giveCoin(state, 1);
   saveState(state);
-  render(state);
   showCoinAnimation(1);
+  // Revert after 180ms
+  setTimeout(() => {
+    render(state);
+  }, 180);
 }
 
 // Initialize the application

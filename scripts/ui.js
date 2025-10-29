@@ -3,7 +3,9 @@ import { SHOP_ITEMS, saveState, buyItem as stateBuyItem, equipItem as stateEquip
 
 // DOM element references
 let coinCount, face, openShop, shopModal, closeShop, itemsList;
-let bodyImg, armsImg, drumImg, cymbalImgEl, drumTapImg, cymbalTapImg, faceImg;
+let faceImg, bodyImg, armsImg, armsCymbalImg;
+let drumImg, drumTapImg;
+let cymbalImg, cymbalTapImg;
 let playArea, idleHint;
 
 // Initialize DOM references
@@ -16,9 +18,10 @@ export function initializeUI() {
   itemsList = document.getElementById('itemsList');
   bodyImg = document.getElementById('bodyImg');
   armsImg = document.getElementById('armsImg');
+  armsCymbalImg = document.getElementById('armsCymbalImg');
   drumImg = document.getElementById('drumImg');
-  cymbalImgEl = document.getElementById('cymbalImg');
   drumTapImg = document.getElementById('drumTapImg');
+  cymbalImg = document.getElementById('cymbalImg');
   cymbalTapImg = document.getElementById('cymbalTapImg');
   faceImg = document.getElementById('face');
   playArea = document.querySelector('.play-area');
@@ -40,12 +43,14 @@ export function render(state) {
 
 // Update which images are shown in the stacked figure
 function updateFigureImages(state) {
-  if (drumImg) drumImg.src = 'public/images/drum.png';
-  if (armsImg) armsImg.src = 'public/images/arms.png';
-  
-  // Show cymbal overlay only when equipped
-  const isEquippedCymbal = state.equipped && state.equipped.drum === 'cymbal';
-  if (cymbalImgEl) cymbalImgEl.style.display = isEquippedCymbal ? 'block' : 'none';
+  // Check if smile needs to be removed
+  if (face && face.classList.contains('smile')) {
+    face.classList.remove('smile');
+  } 
+  // Reset opacities to 100
+  if (armsImg) armsImg.style.opacity = '1';
+  if (drumImg) drumImg.style.opacity = '1';
+  if (cymbalImg) cymbalImg.style.opacity = '1';
 }
 
 // Coin animation
@@ -76,44 +81,23 @@ export function showCoinAnimation(n = 1) {
 
 // Visual tap effects
 export function showTapVisual(id) {
-  const faceEl = document.getElementById('face');
-  
-  // Hide both taps first
-  if (drumTapImg) drumTapImg.style.opacity = '0';
-  if (cymbalTapImg) cymbalTapImg.style.opacity = '0';
-  
   if (id === 'cymbal') {
-    // Cymbal tap visual
-    const prevCymbalVisible = cymbalImgEl && (cymbalImgEl.style.display !== 'none');
-    if (cymbalImgEl) cymbalImgEl.style.display = 'none';
-    if (cymbalTapImg) {
-      cymbalTapImg.style.transition = 'opacity 120ms ease';
-      cymbalTapImg.style.opacity = '1';
-    }
-    if (armsImg) armsImg.src = 'public/images/arms_cymbal.png';
-    if (faceEl) faceEl.classList.add('smile');
-    
+    if (armsImg) armsImg.style.opacity = '0';
+    if (armsCymbalImg) armsCymbalImg.style.opacity = '1';
+    if (cymbalImg) cymbalImg.style.opacity = '0';
+    if (cymbalTapImg) cymbalTapImg.style.opacity = '1';
+    // Reset after 180ms
     setTimeout(() => {
       if (cymbalTapImg) cymbalTapImg.style.opacity = '0';
-      if (cymbalImgEl) cymbalImgEl.style.display = prevCymbalVisible ? 'block' : 'none';
-      if (armsImg) armsImg.src = 'public/images/arms.png';
-      if (faceEl) faceEl.classList.remove('smile');
     }, 180);
   } else {
-    // Drum tap visual
-    const prevCymbalVisible = cymbalImgEl && (cymbalImgEl.style.display !== 'none');
-    if (prevCymbalVisible && cymbalImgEl) cymbalImgEl.style.display = 'none';
-    if (drumTapImg) {
-      drumTapImg.style.transition = 'opacity 120ms ease';
-      drumTapImg.style.opacity = '1';
-    }
-    if (faceEl) faceEl.classList.add('smile');
-    
+    if (face) face.classList.add('smile');
+    if (drumImg) drumImg.style.opacity = '0';
+    if (drumTapImg) drumTapImg.style.opacity = '1';
+    // Reset after 180ms
     setTimeout(() => {
       if (drumTapImg) drumTapImg.style.opacity = '0';
-      if (faceEl) faceEl.classList.remove('smile');
-      if (prevCymbalVisible && cymbalImgEl) cymbalImgEl.style.display = 'block';
-    }, 140);
+    }, 180);
   }
 }
 
