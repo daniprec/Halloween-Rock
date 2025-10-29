@@ -1,8 +1,8 @@
 :root {
-  --bg: #100b0b;
-  --card: #ffffff;
-  --accent: #ffb86b;
-  --muted: #808296;
+  --black: #100b0b;
+  --white: #ffffff;
+  --orange: #ffb86b;
+  --grey: #808296;
   color-scheme: dark;
 }
 
@@ -14,8 +14,8 @@ body {
 }
 
 body {
-  background: #100b0b;
-  color: #fff;
+  background: var(--black);
+  color: var(--white);
   display: flex;
   align-items: stretch;
 }
@@ -44,8 +44,8 @@ body {
 }
 
 .coin-badge {
-  background: linear-gradient(180deg, #ffd27a, #ffb86b);
-  color: #111;
+  background: var(--orange);
+  color: var(--black);
   padding: 6px 10px;
   border-radius: 20px;
 }
@@ -65,13 +65,13 @@ body {
   max-width: 420px;
   height: auto;
   border-radius: 16px;
-  background: var(--card);
+  background: var(--white);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
   padding: 16px;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.06);
 }
 
 /* face used as an overlayed image inside the stacked figure; size is controlled by .stack */
@@ -95,12 +95,12 @@ body {
   margin-top: 14px;
   width: 200px;
   height: 120px;
-  background: #ffb86b;
+  background: var(--orange);
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--muted);
+  color: var(--grey);
 }
 
 /* stacked figure images — ensure images fill the stack and overlay exactly */
@@ -169,21 +169,21 @@ body {
 }
 
 .play-btn {
-  background: var(--accent);
+  background: var(--orange);
   border: 0;
   padding: 10px 14px;
   border-radius: 10px;
-  color: #ffb86b;
+  color: var(--orange);
   font-weight: 700;
 }
 
 /* small icon buttons shown for owned instruments */
 .small-play-btn {
-  background: #ffb86b;
+  background: var(--orange);
   border: 0;
   padding: 6px;
   border-radius: 10px;
-  color: #fff;
+  color: var(--white);
   width: 56px;
   height: 56px;
   display: inline-flex;
@@ -199,20 +199,20 @@ body {
 }
 
 button {
-  background: var(--accent);
+  background: var(--orange);
   border: 0;
   padding: 10px 14px;
   border-radius: 10px;
-  color: #111;
+  color: var(--black);
   font-weight: 700;
 }
 
 .shop-btn {
-  background: transparent;
+  background: var(--orange);
   border: 1px solid rgba(255, 255, 255, 0.06);
   padding: 8px 12px;
   border-radius: 10px;
-  color: var(--muted);
+  color: var(--grey);
 }
 
 /* modal */
@@ -260,13 +260,13 @@ button {
 
 .small {
   font-size: 12px;
-  color: var(--muted);
+  color: var(--grey);
 }
 
 .coin-fly {
   position: fixed;
   font-weight: 800;
-  color: #ffd27a;
+  color: var(--orange);
   text-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
   pointer-events: none;
   transform: translateY(0);
@@ -278,7 +278,7 @@ button {
   left: 50%;
   transform: translateX(-50%);
   top: 12px;
-  background: #111;
+  background: var(--black);
   padding: 8px 12px;
   border-radius: 10px;
   display: none;
@@ -288,8 +288,8 @@ button {
 }
 
 .update-banner button {
-  background: #ffd27a;
-  color: #111;
+  background: var(--orange);
+  color: var(--black);
   border: 0;
   padding: 6px 8px;
   border-radius: 6px;
@@ -303,7 +303,7 @@ button {
   background: rgba(0, 0, 0, 0.6);
   padding: 10px 14px;
   border-radius: 8px;
-  color: #fff;
+  color: var(--white);
   font-weight: 700;
   pointer-events: none;
   opacity: 0;
