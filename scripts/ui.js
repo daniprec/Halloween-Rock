@@ -3,7 +3,8 @@ import { SHOP_ITEMS, saveState, buyItem as stateBuyItem, equipItem as stateEquip
 
 // DOM element references
 let coinCount, face, openShop, shopModal, closeShop, itemsList;
-let faceImg, bodyImg;
+let hat;
+let bodyImg;
 let armRightImg, armLeftImg;
 let drumImg, drumTapImg;
 let cymbalImg, cymbalTapImg, armLeftCymbalImg;
@@ -15,6 +16,7 @@ let playArea, idleHint;
 export function initializeUI() {
   coinCount = document.getElementById('coinCount');
   face = document.getElementById('face');
+  hat = document.getElementById('hat');
   openShop = document.getElementById('openShop');
   shopModal = document.getElementById('shopModal');
   closeShop = document.getElementById('closeShop');
@@ -34,7 +36,6 @@ export function initializeUI() {
   snareImg = document.getElementById('snareImg');
   snareTapImg = document.getElementById('snareTapImg');
   armRightSnareImg = document.getElementById('armRightSnareImg');
-  faceImg = document.getElementById('face');
   playArea = document.querySelector('.play-area');
   
   // Create idle hint
@@ -57,7 +58,10 @@ function updateFigureImages(state) {
   // Check if smile needs to be removed
   if (face && face.classList.contains('smile')) {
     face.classList.remove('smile');
-  } 
+  }
+  if (hat && hat.classList.contains('smile')) {
+    hat.classList.remove('smile');
+  }
   // Remove animation tap effects
   if (drumTapImg) drumTapImg.style.opacity = '0';
   if (cymbalTapImg) cymbalTapImg.style.opacity = '0';
@@ -120,6 +124,7 @@ export function showCoinAnimation(n = 1) {
 export function showTapVisual(id) {
   if (id === 'kick') {
     if (face) face.classList.add('smile');
+    if (hat) hat.classList.add('smile');
     if (drumImg) drumImg.style.opacity = '0';
     if (drumTapImg) drumTapImg.style.opacity = '1';
   } else if (id === 'cymbal') {
