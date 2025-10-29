@@ -14,7 +14,7 @@ export const SHOP_ITEMS = [
   { id: 'tom', kind: 'drum', name: 'Tom', price: 0, icon: 'public/images/icon_tom.png', sample: 'public/audio/tom.wav' },
   { id: 'cymbal', kind: 'drum', name: 'Plato', price: 0, icon: 'public/images/icon_cymbal.png', sample: 'public/audio/cymbal.wav' },
   { id: 'snare', kind: 'drum', name: 'Caja', price: 0, icon: 'public/images/icon_snare.png', sample: 'public/audio/snare.wav' },
-  { id: 'hat', kind: 'hat', name: 'Spooky Hat', price: 0 },
+  { id: 'hat', kind: 'hat', name: 'Gorro de Gnomo', price: 0, image: 'public/images/hat_gnome.png' },
   { id: 'meme1', kind: 'meme', name: 'Pumpkin Poster', price: 0 }
 ];
 
@@ -53,5 +53,12 @@ export function buyItem(state, item) {
 export function equipItem(state, item) {
   state.equipped = state.equipped || { drum: null, hat: null, meme: null };
   state.equipped[item.kind] = item.id;
+  // If the item is a hat, update the hat image immediately
+  if (item.kind === 'hat') {
+    if (hat) {
+      hat.src = item.image;
+      hat.style.opacity = '1';
+    }
+  }
   return state;
 }
