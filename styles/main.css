@@ -1,6 +1,6 @@
 :root {
-  --bg: #0b0b10;
-  --card: #111217;
+  --bg: #100b0b;
+  --card: #ffffff;
   --accent: #ffb86b;
   --muted: #808296;
   color-scheme: dark;
@@ -14,7 +14,7 @@ body {
 }
 
 body {
-  background: linear-gradient(180deg, #06060a 0%, #12121a 100%);
+  background: #100b0b;
   color: #fff;
   display: flex;
   align-items: stretch;
@@ -95,7 +95,7 @@ body {
   margin-top: 14px;
   width: 200px;
   height: 120px;
-  background: linear-gradient(180deg, #222, #1a1a26);
+  background: #ffb86b;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -173,13 +173,13 @@ body {
   border: 0;
   padding: 10px 14px;
   border-radius: 10px;
-  color: #111;
+  color: #ffb86b;
   font-weight: 700;
 }
 
 /* small icon buttons shown for owned instruments */
 .small-play-btn {
-  background: #2b2b33;
+  background: #ffb86b;
   border: 0;
   padding: 6px;
   border-radius: 10px;

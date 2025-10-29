@@ -88,6 +88,7 @@ export function showTapVisual(id) {
     if (cymbalTapImg) cymbalTapImg.style.opacity = '1';
     // Reset after 180ms
     setTimeout(() => {
+      if (armsCymbalImg) armsCymbalImg.style.opacity = '0';
       if (cymbalTapImg) cymbalTapImg.style.opacity = '0';
     }, 180);
   } else {
@@ -166,7 +167,7 @@ export function renderShop(state) {
         // Show purchase confirmation
         const toast = document.createElement('div');
         toast.textContent = 'Purchased!';
-        toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:8px 12px;border-radius:8px;z-index:9999';
+        toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:grey;padding:8px 12px;border-radius:8px;z-index:9999';
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 1200);
       });
