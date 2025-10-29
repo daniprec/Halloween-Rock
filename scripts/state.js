@@ -10,7 +10,7 @@ const defaultState = {
 
 // Shop items configuration
 export const SHOP_ITEMS = [
-  { id: 'kick', kind: 'drum', name: 'Kick Drum', price: 0, icon: 'public/images/drum.png' },
+  { id: 'kick', kind: 'drum', name: 'Kick Drum', price: 0, icon: 'public/images/icon_kick.png' },
   { id: 'tom', kind: 'drum', name: 'Tom', price: 0, icon: 'public/images/icon_tom.png' },
   { id: 'cymbal', kind: 'drum', name: 'Cymbal', price: 0, icon: 'public/images/icon_cymbal.png' },
   { id: 'snare', kind: 'drum', name: 'Snare', price: 0, icon: 'public/images/icon_snare.png' },
