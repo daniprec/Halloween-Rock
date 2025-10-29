@@ -7,6 +7,8 @@ let faceImg, bodyImg;
 let armRightImg, armLeftImg, armLeftCymbalImg;
 let drumImg, drumTapImg;
 let cymbalImg, cymbalTapImg;
+let tomImg, tomTapImg;
+let snareImg, snareTapImg;
 let playArea, idleHint;
 
 // Initialize DOM references
@@ -49,6 +51,12 @@ function updateFigureImages(state) {
   if (face && face.classList.contains('smile')) {
     face.classList.remove('smile');
   } 
+  // Remove animation tap effects
+  if (drumTapImg) drumTapImg.style.opacity = '0';
+  if (cymbalTapImg) cymbalTapImg.style.opacity = '0';
+  if (armLeftCymbalImg) armLeftCymbalImg.style.opacity = '0';
+  if (tomTapImg) tomTapImg.style.opacity = '0';
+  if (snareTapImg) snareTapImg.style.opacity = '0';
   // Reset opacities to max
   if (armLeftImg) armLeftImg.style.opacity = '1';
   if (armRightImg) armRightImg.style.opacity = '1';
@@ -59,6 +67,16 @@ function updateFigureImages(state) {
     if (cymbalImg) cymbalImg.style.opacity = '1';
   } else {
     if (cymbalImg) cymbalImg.style.opacity = '0.25';
+  }
+  if (ownedDrums.includes('tom')) {
+    if (tomImg) tomImg.style.opacity = '1';
+  } else {
+    if (tomImg) tomImg.style.opacity = '0.25';
+  }
+  if (ownedDrums.includes('snare')) {
+    if (snareImg) snareImg.style.opacity = '1';
+  } else {
+    if (snareImg) snareImg.style.opacity = '0.25';
   }
 }
 
@@ -90,28 +108,21 @@ export function showCoinAnimation(n = 1) {
 
 // Visual tap effects
 export function showTapVisual(id) {
-  if (id === 'cymbal') {
+  if (id === 'kick') {
+    if (face) face.classList.add('smile');
+    if (drumImg) drumImg.style.opacity = '0';
+    if (drumTapImg) drumTapImg.style.opacity = '1';
+  } else if (id === 'cymbal') {
     if (armLeftImg) armLeftImg.style.opacity = '0';
     if (armLeftCymbalImg) armLeftCymbalImg.style.opacity = '1';
     if (cymbalImg) cymbalImg.style.opacity = '0';
     if (cymbalTapImg) cymbalTapImg.style.opacity = '1';
-    // Reset after 180ms
-    setTimeout(() => {
-      if (armLeftImg) armLeftImg.style.opacity = '1';
-      if (armLeftCymbalImg) armLeftCymbalImg.style.opacity = '0';
-      if (cymbalImg) cymbalImg.style.opacity = '1';
-      if (cymbalTapImg) cymbalTapImg.style.opacity = '0';
-    }, 180);
-  } else if (id === 'kick') {
-    if (face) face.classList.add('smile');
-    if (drumImg) drumImg.style.opacity = '0';
-    if (drumTapImg) drumTapImg.style.opacity = '1';
-    // Reset after 180ms
-    setTimeout(() => {
-      if (face) face.classList.remove('smile');
-      if (drumImg) drumImg.style.opacity = '1';
-      if (drumTapImg) drumTapImg.style.opacity = '0';
-    }, 180);
+  } else if (id === 'tom' ) {
+    if (tomImg) tomImg.style.opacity = '0';
+    if (tomTapImg) tomTapImg.style.opacity = '1';
+  } else if (id === 'snare' ) {
+    if (snareImg) snareImg.style.opacity = '0';
+    if (snareTapImg) snareTapImg.style.opacity = '1';
   }
 }
 
