@@ -3,7 +3,8 @@ import { SHOP_ITEMS, saveState, buyItem as stateBuyItem, equipItem as stateEquip
 
 // DOM element references
 let coinCount, face, openShop, shopModal, closeShop, itemsList;
-let faceImg, bodyImg, armsImg, armsCymbalImg;
+let faceImg, bodyImg;
+let armRightImg, armLeftImg, armLeftCymbalImg;
 let drumImg, drumTapImg;
 let cymbalImg, cymbalTapImg;
 let playArea, idleHint;
@@ -17,8 +18,9 @@ export function initializeUI() {
   closeShop = document.getElementById('closeShop');
   itemsList = document.getElementById('itemsList');
   bodyImg = document.getElementById('bodyImg');
-  armsImg = document.getElementById('armsImg');
-  armsCymbalImg = document.getElementById('armsCymbalImg');
+  armRightImg = document.getElementById('armRightImg');
+  armLeftImg = document.getElementById('armLeftImg');
+  armLeftCymbalImg = document.getElementById('armLeftCymbalImg');
   drumImg = document.getElementById('drumImg');
   drumTapImg = document.getElementById('drumTapImg');
   cymbalImg = document.getElementById('cymbalImg');
@@ -48,7 +50,8 @@ function updateFigureImages(state) {
     face.classList.remove('smile');
   } 
   // Reset opacities to max
-  if (armsImg) armsImg.style.opacity = '1';
+  if (armLeftImg) armLeftImg.style.opacity = '1';
+  if (armRightImg) armRightImg.style.opacity = '1';
   if (drumImg) drumImg.style.opacity = '1';
   // Opacity of the other instruments depends on ownership
   const ownedDrums = state.owned.drums || [];
@@ -88,13 +91,15 @@ export function showCoinAnimation(n = 1) {
 // Visual tap effects
 export function showTapVisual(id) {
   if (id === 'cymbal') {
-    if (armsImg) armsImg.style.opacity = '0';
-    if (armsCymbalImg) armsCymbalImg.style.opacity = '1';
+    if (armLeftImg) armLeftImg.style.opacity = '0';
+    if (armLeftCymbalImg) armLeftCymbalImg.style.opacity = '1';
     if (cymbalImg) cymbalImg.style.opacity = '0';
     if (cymbalTapImg) cymbalTapImg.style.opacity = '1';
     // Reset after 180ms
     setTimeout(() => {
-      if (armsCymbalImg) armsCymbalImg.style.opacity = '0';
+      if (armLeftImg) armLeftImg.style.opacity = '1';
+      if (armLeftCymbalImg) armLeftCymbalImg.style.opacity = '0';
+      if (cymbalImg) cymbalImg.style.opacity = '1';
       if (cymbalTapImg) cymbalTapImg.style.opacity = '0';
     }, 180);
   } else if (id === 'kick') {
@@ -103,6 +108,8 @@ export function showTapVisual(id) {
     if (drumTapImg) drumTapImg.style.opacity = '1';
     // Reset after 180ms
     setTimeout(() => {
+      if (face) face.classList.remove('smile');
+      if (drumImg) drumImg.style.opacity = '1';
       if (drumTapImg) drumTapImg.style.opacity = '0';
     }, 180);
   }
