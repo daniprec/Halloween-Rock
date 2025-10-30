@@ -63,7 +63,6 @@ export function initializeUI() {
       'public/images/arm_left_tom.png',
       'public/images/arm_right_tom.png',
       'public/images/face.png',
-      'public/images/hat_gnome.png'
     ];
 
     // also include any images/icons declared in SHOP_ITEMS
@@ -100,8 +99,33 @@ export function updateCostumeImages(state) {
   const costumeItem = SHOP_ITEMS.find(it => it.kind === 'costume' && it.id === equippedCostumeId);
 
   // Update face image
-  if (face && costumeItem && costumeItem.face) {
-    face.src = costumeItem.face;
+  if (costumeItem) {
+    if (face) {
+      face.src = `public/images/face_${costumeItem.id}.png`;
+    }
+    // Update body image
+    if (bodyImg) {
+      bodyImg.src = `public/images/body_${costumeItem.id}.png`;
+    }
+    // All arms
+    if (armRightImg) {
+      armRightImg.src = `public/images/arm_right_${costumeItem.id}.png`;
+    }
+    if (armLeftImg) {
+      armLeftImg.src = `public/images/arm_left_${costumeItem.id}.png`;
+    }
+    if (armLeftCymbalImg) {
+      armLeftCymbalImg.src = `public/images/arm_left_cymbal_${costumeItem.id}.png`;
+    }
+    if (armLeftTomImg) {
+      armLeftTomImg.src = `public/images/arm_left_tom_${costumeItem.id}.png`;
+    }
+    if (armRightTomImg) {
+      armRightTomImg.src = `public/images/arm_right_tom_${costumeItem.id}.png`;
+    }
+    if (armRightSnareImg) {
+      armRightSnareImg.src = `public/images/arm_right_snare_${costumeItem.id}.png`;
+    }
   }
 }
 
