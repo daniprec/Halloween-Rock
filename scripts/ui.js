@@ -40,7 +40,7 @@ export function initializeUI() {
   idleHint = document.createElement('div');
   idleHint.id = 'idleHint';
   idleHint.className = 'idle-hint';
-  idleHint.textContent = '¡Toca la batería para ganar monedas!';
+  idleHint.textContent = '¡Sube el volumen y después toca la batería para ganar monedas!';
   idleHint.classList.add('show');
   playArea.appendChild(idleHint);
 
