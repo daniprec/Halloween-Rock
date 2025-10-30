@@ -284,6 +284,10 @@ button {
   border-radius: 12px;
   padding: 12px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  /* Limit modal height so it doesn't overflow the viewport; allow internal scrolling */
+  max-height: 70vh;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .item {
