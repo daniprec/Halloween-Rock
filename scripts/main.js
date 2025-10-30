@@ -9,7 +9,6 @@ import {
   closeShopModal,
   showTapVisual,
   hideIdleHint,
-  resetIdleTimer,
   getUIElements
 } from './ui.js';
 
@@ -26,7 +25,6 @@ function playAndShow(id) {
   giveCoin(state, 1);
   // Remove idle hint
   hideIdleHint();
-  resetIdleTimer();
   // Save state
   saveState(state);
   // Revert after 180ms
@@ -45,9 +43,6 @@ function init() {
   
   // Initial render
   render(state);
-  
-  // Start idle timer
-  resetIdleTimer();
   
   // Load audio samples
   loadAllSamples().catch(e => console.warn('loading static samples failed', e));
