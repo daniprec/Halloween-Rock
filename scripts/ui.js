@@ -71,6 +71,10 @@ export function initializeUI() {
       if (it.icon) staticImgs.push(it.icon);
       if (it.image) staticImgs.push(it.image);
       if (it.face) staticImgs.push(it.face);
+      // preload tap/arm assets for skins (may include GIFs)
+      if (it.tap) staticImgs.push(it.tap);
+      if (it.armLeft) staticImgs.push(it.armLeft);
+      if (it.armRight) staticImgs.push(it.armRight);
     });
 
     // dedupe and start loading

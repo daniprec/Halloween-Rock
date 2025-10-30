@@ -30,7 +30,7 @@ function playAndShow(id) {
   // Revert after 180ms
   setTimeout(() => {
     render(state);
-  }, 180);
+  }, 500);
 }
 
 // Initialize the application
