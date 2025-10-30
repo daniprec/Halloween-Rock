@@ -192,7 +192,7 @@ export function renderShop(state) {
         right.innerHTML = '<span class="small">Equipped</span>';
       } else {
         const eq = document.createElement('button');
-        eq.textContent = 'Equip';
+        eq.textContent = 'Equipar';
         eq.addEventListener('click', () => {
           stateEquipItem(state, it);
           saveState(state);
@@ -203,7 +203,7 @@ export function renderShop(state) {
       }
     } else {
       const b = document.createElement('button');
-      b.textContent = 'Buy';
+      b.textContent = 'Comprar';
       b.addEventListener('click', () => {
         const result = stateBuyItem(state, it);
         if (!result.success) {
@@ -216,7 +216,7 @@ export function renderShop(state) {
         
         // Show purchase confirmation
         const toast = document.createElement('div');
-        toast.textContent = 'Purchased!';
+        toast.textContent = '¡Comprado!';
         toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:grey;padding:8px 12px;border-radius:8px;z-index:9999';
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 1200);
