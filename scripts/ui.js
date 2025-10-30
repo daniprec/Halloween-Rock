@@ -142,6 +142,16 @@ function updateInstrumentSkins(state) {
   try {
     const skins = (state.equipped && state.equipped.skins) || {};
 
+    // kick drum (DOM uses drumImg/drumTapImg)
+    if (skins.kick) {
+      const skinItem = SHOP_ITEMS.find(s => s.id === skins.kick);
+      if (drumImg && skinItem && skinItem.image) drumImg.src = skinItem.image;
+      if (drumTapImg && skinItem && skinItem.tap) drumTapImg.src = skinItem.tap;
+    } else {
+      if (drumImg) drumImg.src = 'public/images/drum.png';
+      if (drumTapImg) drumTapImg.src = 'public/images/drum_tap.png';
+    }
+
     // cymbal
     if (skins.cymbal) {
       const skinItem = SHOP_ITEMS.find(s => s.id === skins.cymbal);
