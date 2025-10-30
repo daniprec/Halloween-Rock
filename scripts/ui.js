@@ -88,6 +88,32 @@ export function initializeUI() {
 // Main render function
 export function render(state) {
   coinCount.textContent = state.coins;
+
+  // Show the shop button when the user first reaches 5 coins.
+  // Persist that we've shown it so it stays visible afterwards.
+  try {
+    const alreadyShown = !!state.shopShown;
+    const reachedThreshold = (state.coins || 0) >= 5;
+    if (openShop) {
+      if (alreadyShown || reachedThreshold) {
+        openShop.style.opacity = '1';
+        openShop.style.pointerEvents = 'auto';
+      } else {
+        openShop.style.opacity = '0';
+        openShop.style.pointerEvents = 'none';
+      }
+    }
+
+    if (reachedThreshold && !alreadyShown) {
+      // mark as shown and persist
+      state.shopShown = true;
+      saveState(state);
+    }
+  } catch (e) {
+    // non-fatal; UI should still render
+    console.warn('shop reveal check failed', e);
+  }
+
   updateCostumeImages(state);
   updateFigureImages(state);
   renderOwnedPlayButtons(state);
