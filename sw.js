@@ -1,5 +1,5 @@
 // Bump this cache name whenever you change files to force clients to refresh
-const CACHE_NAME = 'halloween-rock-v3'
+const CACHE_NAME = 'halloween-rock-v4'
 // Use relative paths in the precache so the service worker works under a repo subpath (GH Pages)
 const PRECACHE_URLS = [
   'index.html',
@@ -10,11 +10,10 @@ const PRECACHE_URLS = [
   'scripts/main.js',
   'public/images/face.png',
   // optional audio sample - will be fetched and cached only if present
-  'public/audio/drum.wav',
-  // tom sample (precache so it's available offline on install)
+  'public/audio/kick.wav',
+  'public/audio/snare.wav',
   'public/audio/tom.wav',
-  // cymbal sample (precache so it's available offline on install)
-  'public/audio/cymbal.wav'
+  'public/audio/cymbal.wav',
 ]
 
 self.addEventListener('install', event => {

@@ -15,7 +15,6 @@ export const SHOP_ITEMS = [
   { id: 'cymbal', kind: 'drum', name: 'Plato', price: 0, icon: 'public/images/icon_cymbal.png', sample: 'public/audio/cymbal.wav' },
   { id: 'snare', kind: 'drum', name: 'Caja', price: 0, icon: 'public/images/icon_snare.png', sample: 'public/audio/snare.wav' },
   { id: 'hat', kind: 'hat', name: 'Gorro de Gnomo', price: 0, image: 'public/images/hat_gnome.png' },
-  { id: 'meme1', kind: 'meme', name: 'Pumpkin Poster', price: 0 }
 ];
 
 export function loadState() {
