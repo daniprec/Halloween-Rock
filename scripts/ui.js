@@ -42,7 +42,7 @@ export function initializeUI() {
   idleHint = document.createElement('div');
   idleHint.id = 'idleHint';
   idleHint.className = 'idle-hint';
-  idleHint.textContent = '¡Pulsa los botones de abajo!';
+  idleHint.textContent = '¡Toca la batería para ganar monedas!';
   playArea.appendChild(idleHint);
 }
 
