@@ -43,6 +43,47 @@ export function initializeUI() {
   idleHint.className = 'idle-hint';
   idleHint.textContent = '¡Toca la batería para ganar monedas!';
   playArea.appendChild(idleHint);
+
+  // Preload commonly used images (warm the browser/SW cache so swaps are fast)
+  try {
+    const staticImgs = [
+      'public/images/body.png',
+      'public/images/arm_left.png',
+      'public/images/arm_right.png',
+      'public/images/drum.png',
+      'public/images/drum_tap.png',
+      'public/images/cymbal.png',
+      'public/images/cymbal_tap.png',
+      'public/images/arm_left_cymbal.png',
+      'public/images/snare.png',
+      'public/images/snare_tap.png',
+      'public/images/arm_right_snare.png',
+      'public/images/tom.png',
+      'public/images/tom_tap.png',
+      'public/images/arm_left_tom.png',
+      'public/images/arm_right_tom.png',
+      'public/images/face.png',
+      'public/images/hat_gnome.png'
+    ];
+
+    // also include any images/icons declared in SHOP_ITEMS
+    SHOP_ITEMS.forEach(it => {
+      if (it.icon) staticImgs.push(it.icon);
+      if (it.image) staticImgs.push(it.image);
+      if (it.face) staticImgs.push(it.face);
+    });
+
+    // dedupe and start loading
+    Array.from(new Set(staticImgs)).forEach(src => {
+      const img = new Image();
+      img.src = src;
+      // best-effort decode to warm decoder, ignore failures
+      if (img.decode) img.decode().catch(() => {});
+    });
+  } catch (e) {
+    // non-fatal
+    console.warn('preload images failed', e);
+  }
 }
 
 // Main render function
