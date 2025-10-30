@@ -167,32 +167,6 @@ function updateFigureImages(state) {
   }
 }
 
-// Coin animation
-export function showCoinAnimation(n = 1) {
-  try {
-    const coinEl = document.getElementById('coinCount');
-    const rect = coinEl.getBoundingClientRect();
-    const el = document.createElement('div');
-    el.className = 'coin-fly';
-    el.textContent = `+${n}`;
-    document.body.appendChild(el);
-    
-    el.style.left = (rect.left + rect.width / 2) + 'px';
-    el.style.top = (rect.top + rect.height / 2) + 'px';
-    el.style.transform = 'translate(-50%, 0)';
-    el.style.opacity = '1';
-    
-    requestAnimationFrame(() => {
-      el.style.transform = 'translate(-50%, -48px)';
-      el.style.opacity = '0';
-    });
-    
-    setTimeout(() => el.remove(), 900);
-  } catch (e) {
-    console.warn('coin animation failed', e);
-  }
-}
-
 // Visual tap effects
 export function showTapVisual(id) {
   if (id === 'kick') {
