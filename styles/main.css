@@ -200,7 +200,7 @@ body {
   display: flex;
   justify-content: center;
   position: relative;
-  bottom: 10%;
+  bottom: 15%;
   z-index: 200;
 }
 
