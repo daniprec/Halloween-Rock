@@ -3,6 +3,7 @@ const STORAGE_KEY = 'halloween-rock:v1';
 
 const defaultState = {
   coins: 0,
+  shopShown: false,
   owned: { drums: ['kick'], hats: [], memes: [] },
   equipped: { costume: null, meme: null },
   version: 1

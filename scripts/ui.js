@@ -3,7 +3,6 @@ import { SHOP_ITEMS, saveState, buyItem as stateBuyItem, equipItem as stateEquip
 
 // DOM element references
 let coinCount, face, openShop, shopModal, closeShop, itemsList;
-let costume;
 let bodyImg;
 let armRightImg, armLeftImg;
 let drumImg, drumTapImg;
@@ -42,6 +41,7 @@ export function initializeUI() {
   idleHint.id = 'idleHint';
   idleHint.className = 'idle-hint';
   idleHint.textContent = '¡Toca la batería para ganar monedas!';
+  idleHint.classList.add('show');
   playArea.appendChild(idleHint);
 
   // Preload commonly used images (warm the browser/SW cache so swaps are fast)
@@ -88,6 +88,39 @@ export function initializeUI() {
 // Main render function
 export function render(state) {
   coinCount.textContent = state.coins;
+
+  // Show the shop button when the user first reaches 5 coins.
+  // Persist that we've shown it so it stays visible afterwards.
+  try {
+    const alreadyShown = !!state.shopShown;
+    const alreadyPurchased = (state.owned.drums || []).length > 1;
+    const reachedThreshold = (state.coins || 0) >= 5;
+    if (openShop) {
+      if (alreadyShown || reachedThreshold) {
+        openShop.style.opacity = '1';
+        openShop.style.pointerEvents = 'auto';
+      } else {
+        openShop.style.opacity = '0';
+        openShop.style.pointerEvents = 'none';
+      }
+    }
+
+    if (reachedThreshold && !alreadyShown) {
+      // mark as shown and persist
+      state.shopShown = true;
+      saveState(state);
+    }
+
+    // Change idleHint message and show
+    if (reachedThreshold && !alreadyPurchased) {
+      idleHint.textContent = '¡Compra nuevos instrumentos en Mejoras!';
+      idleHint.classList.add('show');
+    }
+  } catch (e) {
+    // non-fatal; UI should still render
+    console.warn('shop reveal check failed', e);
+  }
+
   updateCostumeImages(state);
   updateFigureImages(state);
   renderOwnedPlayButtons(state);
@@ -193,23 +226,12 @@ export function showTapVisual(id) {
   }
 }
 
-// Idle hint management
-let _idleTimer = null;
-const IDLE_DELAY = 2000;
-
 export function showIdleHint() {
   if (!idleHint.classList.contains('show')) idleHint.classList.add('show');
 }
 
 export function hideIdleHint() {
   if (idleHint.classList.contains('show')) idleHint.classList.remove('show');
-}
-
-export function resetIdleTimer() {
-  if (_idleTimer) clearTimeout(_idleTimer);
-  _idleTimer = setTimeout(() => {
-    showIdleHint();
-  }, IDLE_DELAY);
 }
 
 // Shop modal
