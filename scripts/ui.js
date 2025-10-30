@@ -71,6 +71,10 @@ export function initializeUI() {
       if (it.icon) staticImgs.push(it.icon);
       if (it.image) staticImgs.push(it.image);
       if (it.face) staticImgs.push(it.face);
+      // preload tap/arm assets for skins (may include GIFs)
+      if (it.tap) staticImgs.push(it.tap);
+      if (it.armLeft) staticImgs.push(it.armLeft);
+      if (it.armRight) staticImgs.push(it.armRight);
     });
 
     // dedupe and start loading
@@ -141,6 +145,16 @@ export function render(state) {
 function updateInstrumentSkins(state) {
   try {
     const skins = (state.equipped && state.equipped.skins) || {};
+
+    // kick drum (DOM uses drumImg/drumTapImg)
+    if (skins.kick) {
+      const skinItem = SHOP_ITEMS.find(s => s.id === skins.kick);
+      if (drumImg && skinItem && skinItem.image) drumImg.src = skinItem.image;
+      if (drumTapImg && skinItem && skinItem.tap) drumTapImg.src = skinItem.tap;
+    } else {
+      if (drumImg) drumImg.src = 'public/images/drum.png';
+      if (drumTapImg) drumTapImg.src = 'public/images/drum_tap.png';
+    }
 
     // cymbal
     if (skins.cymbal) {

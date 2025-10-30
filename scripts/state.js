@@ -18,6 +18,7 @@ export const SHOP_ITEMS = [
   { id: 'vampire', kind: 'costume', name: 'Disfraz de Vampiro', price: 100, face: 'y', body: 'y' },
   { id: 'gnome', kind: 'costume', name: 'Disfraz de Gnomo', price: 200, face: 'y', body: 'y', armRight: 'y', armLeft: 'y' },
   { id: 'bombardino', kind: 'drum-skin', name: 'Plato: Bombardino', price: 20, icon: 'public/images/icon_cymbal.png', sample: 'public/audio/bombardino.wav', target: 'cymbal', image: 'public/images/cymbal_bombardino.png', tap: 'public/images/cymbal_tap_bombardino.png'},
+  { id: 'oiia', kind: 'drum-skin', name: 'Bombo: OIIA', price: 20, icon: 'public/images/icon_kick.png', sample: 'public/audio/oiia.wav', target: 'kick', image: 'public/images/drum_oiia.png', tap: 'public/images/drum_oiia_hit.gif'},
 ];
 
 export function loadState() {
