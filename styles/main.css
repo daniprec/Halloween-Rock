@@ -33,6 +33,7 @@ body {
 }
 
 .topbar {
+  margin-top: 10%;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -199,7 +200,7 @@ body {
   display: flex;
   justify-content: center;
   position: relative;
-  bottom: 10%;
+  margin-bottom: 10%;
 }
 
 .play-row {
