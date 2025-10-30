@@ -95,11 +95,11 @@ body {
 }
 
 .face.smile {
-  transform: translateY(-6px);
+  transform: translateY(-4px);
 }
 
 .hat.smile {
-  transform: translateY(-6px);
+  transform: translateY(-4px);
 }
 
 .face.surprised {
