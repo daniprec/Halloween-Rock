@@ -321,19 +321,23 @@ export function showTapVisual(id) {
   } else if (id === 'cymbal') {
     if (armLeftImg) armLeftImg.style.opacity = '0';
     if (armLeftCymbalImg) armLeftCymbalImg.style.opacity = '1';
+    if (armLeftTomImg) armLeftTomImg.style.opacity = '0';
     if (cymbalImg) cymbalImg.style.opacity = '0';
     if (cymbalTapImg) cymbalTapImg.style.opacity = '1';
   } else if (id === 'tom' ) {
     if (tomImg) tomImg.style.opacity = '0';
     if (tomTapImg) tomTapImg.style.opacity = '1';
     if (armLeftImg) armLeftImg.style.opacity = '0';
+    if (armLeftCymbalImg) armLeftCymbalImg.style.opacity = '0';
     if (armLeftTomImg) armLeftTomImg.style.opacity = '1';
     if (armRightImg) armRightImg.style.opacity = '0';
     if (armRightTomImg) armRightTomImg.style.opacity = '1';
+    if (armRightSnareImg) armRightSnareImg.style.opacity = '0';
   } else if (id === 'snare' ) {
     if (snareImg) snareImg.style.opacity = '0';
     if (snareTapImg) snareTapImg.style.opacity = '1';
     if (armRightImg) armRightImg.style.opacity = '0';
+    if (armRightTomImg) armRightTomImg.style.opacity = '0';
     if (armRightSnareImg) armRightSnareImg.style.opacity = '1';
   }
 }

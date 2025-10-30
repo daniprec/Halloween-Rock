@@ -15,10 +15,10 @@ export const SHOP_ITEMS = [
   { id: 'tom', kind: 'drum', name: 'Tom', price: 5, icon: 'public/images/icon_tom.png', sample: 'public/audio/tom.wav' },
   { id: 'cymbal', kind: 'drum', name: 'Plato', price: 20, icon: 'public/images/icon_cymbal.png', sample: 'public/audio/cymbal.wav' },
   { id: 'snare', kind: 'drum', name: 'Caja', price: 50, icon: 'public/images/icon_snare.png', sample: 'public/audio/snare.wav' },
-  { id: 'vampire', kind: 'costume', name: 'Disfraz de Vampiro', price: 100, face: 'y', body: 'y' },
-  { id: 'gnome', kind: 'costume', name: 'Disfraz de Gnomo', price: 200, face: 'y', body: 'y', armRight: 'y', armLeft: 'y' },
-  { id: 'bombardino', kind: 'drum-skin', name: 'Plato: Bombardino', price: 20, icon: 'public/images/icon_cymbal.png', sample: 'public/audio/bombardino.wav', target: 'cymbal', image: 'public/images/cymbal_bombardino.png', tap: 'public/images/cymbal_tap_bombardino.png'},
-  { id: 'oiia', kind: 'drum-skin', name: 'Bombo: OIIA', price: 20, icon: 'public/images/icon_kick.png', sample: 'public/audio/oiia.wav', target: 'kick', image: 'public/images/drum_oiia.png', tap: 'public/images/drum_oiia_hit.gif'},
+  { id: 'vampire', kind: 'costume', name: 'Disfraz de Vampiro', price: 10, face: 'y', body: 'y' },
+  { id: 'gnome', kind: 'costume', name: 'Disfraz de Gnomo', price: 50, face: 'y', body: 'y', armRight: 'y', armLeft: 'y' },
+  { id: 'bombardino', kind: 'drum-skin', name: 'Plato: Bombardino', price: 100, icon: 'public/images/icon_cymbal.png', sample: 'public/audio/bombardino.wav', target: 'cymbal', image: 'public/images/cymbal_bombardino.png', tap: 'public/images/cymbal_tap_bombardino.png'},
+  { id: 'oiia', kind: 'drum-skin', name: 'Bombo: OIIA', price: 200, icon: 'public/images/icon_kick.png', sample: 'public/audio/oiia.wav', target: 'kick', image: 'public/images/drum_oiia.png', tap: 'public/images/drum_oiia_hit.gif'},
 ];
 
 export function loadState() {
