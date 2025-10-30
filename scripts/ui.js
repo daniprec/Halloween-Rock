@@ -1,5 +1,6 @@
 // UI rendering and animations
 import { SHOP_ITEMS, saveState, buyItem as stateBuyItem, equipItem as stateEquipItem } from './state.js';
+import { setInstrumentSample, resetInstrumentSample } from './audio.js';
 
 // DOM element references
 let coinCount, face, openShop, shopModal, closeShop, itemsList;
@@ -127,7 +128,75 @@ export function render(state) {
 
   updateCostumeImages(state);
   updateFigureImages(state);
+  updateInstrumentSkins(state);
+  // Sync audio samples for equipped skins (best-effort, async)
+  try {
+    // fire-and-forget: don't await here to keep render sync
+    syncInstrumentAudio(state).catch(e => console.warn('syncInstrumentAudio failed', e));
+  } catch (e) {}
   renderOwnedPlayButtons(state);
+}
+
+// Update instrument images based on equipped skins (general for any instrument)
+function updateInstrumentSkins(state) {
+  try {
+    const skins = (state.equipped && state.equipped.skins) || {};
+
+    // cymbal
+    if (skins.cymbal) {
+      const skinItem = SHOP_ITEMS.find(s => s.id === skins.cymbal);
+      if (cymbalImg && skinItem && skinItem.image) cymbalImg.src = skinItem.image;
+      if (cymbalTapImg && skinItem && skinItem.tap) cymbalTapImg.src = skinItem.tap;
+    } else {
+      if (cymbalImg) cymbalImg.src = 'public/images/cymbal.png';
+      if (cymbalTapImg) cymbalTapImg.src = 'public/images/cymbal_tap.png';
+    }
+
+    // tom
+    if (skins.tom) {
+      const skinItem = SHOP_ITEMS.find(s => s.id === skins.tom);
+      if (tomImg && skinItem && skinItem.image) tomImg.src = skinItem.image;
+      if (tomTapImg && skinItem && skinItem.tap) tomTapImg.src = skinItem.tap;
+    } else {
+      if (tomImg) tomImg.src = 'public/images/tom.png';
+      if (tomTapImg) tomTapImg.src = 'public/images/tom_tap.png';
+    }
+
+    // snare
+    if (skins.snare) {
+      const skinItem = SHOP_ITEMS.find(s => s.id === skins.snare);
+      if (snareImg && skinItem && skinItem.image) snareImg.src = skinItem.image;
+      if (snareTapImg && skinItem && skinItem.tap) snareTapImg.src = skinItem.tap;
+    } else {
+      if (snareImg) snareImg.src = 'public/images/snare.png';
+      if (snareTapImg) snareTapImg.src = 'public/images/snare_tap.png';
+    }
+  } catch (e) {
+    console.warn('updateInstrumentSkins failed', e);
+  }
+}
+
+// Sync audio samples for currently equipped skins. This updates the sample mapping
+// so playInstrument uses the skin's sample for the target instrument.
+async function syncInstrumentAudio(state) {
+  const skins = (state.equipped && state.equipped.skins) || {};
+
+  // For each instrument we know about, set or reset sample mapping
+  const instruments = ['cymbal', 'tom', 'snare', 'kick'];
+  for (const inst of instruments) {
+    try {
+      const skinId = skins[inst];
+      if (skinId) {
+        const it = SHOP_ITEMS.find(s => s.id === skinId);
+        if (it && it.sample) await setInstrumentSample(inst, it.sample);
+      } else {
+        await resetInstrumentSample(inst);
+      }
+    } catch (e) {
+      // continue for other instruments
+      console.warn('syncInstrumentAudio error for', inst, e);
+    }
+  }
 }
 
 // Costumes may change the face and body images
@@ -281,23 +350,39 @@ export function renderShop(state) {
     
     const right = document.createElement('div');
     const owned = (state.owned[it.kind + 's'] || []).includes(it.id);
-    
+
     if (owned) {
       row.classList.add('owned');
-      const isEquipped = state.equipped && state.equipped[it.kind] === it.id;
+      // Determine equipped state. Skins are stored in state.equipped.skins[target]
+      let isEquipped = false;
+      if (it.kind && it.kind.endsWith('-skin')) {
+        const target = it.target;
+        isEquipped = !!(state.equipped && state.equipped.skins && state.equipped.skins[target] === it.id);
+      } else {
+        isEquipped = state.equipped && state.equipped[it.kind] === it.id;
+      }
+
       if (isEquipped) {
-        // If this is a costume, allow the user to unequip it (reset to original)
-        if (it.kind === 'costume') {
+        // Allow the user to unequip skins and costumes
+        if (it.kind === 'costume' || (it.kind && it.kind.endsWith('-skin'))) {
           const uneq = document.createElement('button');
           uneq.textContent = 'Desequipar';
           uneq.addEventListener('click', () => {
-            // Use the same stateEquipItem helper but set id to null to unequip
             try {
-              stateEquipItem(state, { kind: it.kind, id: null });
+              if (it.kind && it.kind.endsWith('-skin')) {
+                // pass target so equipItem knows which skin to unset
+                stateEquipItem(state, { kind: it.kind, id: null, target: it.target });
+              } else {
+                stateEquipItem(state, { kind: it.kind, id: null });
+              }
             } catch (e) {
-              // fallback: directly unset
+              // fallback
               state.equipped = state.equipped || {};
-              state.equipped[it.kind] = null;
+              if (it.kind && it.kind.endsWith('-skin')) {
+                if (state.equipped.skins) delete state.equipped.skins[it.target];
+              } else {
+                state.equipped[it.kind] = null;
+              }
             }
             saveState(state);
             render(state);
@@ -311,7 +396,12 @@ export function renderShop(state) {
         const eq = document.createElement('button');
         eq.textContent = 'Equipar';
         eq.addEventListener('click', () => {
-          stateEquipItem(state, it);
+          // If this is a skin, ensure target is included when equipping
+          if (it.kind && it.kind.endsWith('-skin')) {
+            stateEquipItem(state, it);
+          } else {
+            stateEquipItem(state, it);
+          }
           saveState(state);
           render(state);
           renderShop(state);
