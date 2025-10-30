@@ -3,7 +3,7 @@ import { SHOP_ITEMS, saveState, buyItem as stateBuyItem, equipItem as stateEquip
 
 // DOM element references
 let coinCount, face, openShop, shopModal, closeShop, itemsList;
-let hat;
+let costume;
 let bodyImg;
 let armRightImg, armLeftImg;
 let drumImg, drumTapImg;
@@ -16,7 +16,6 @@ let playArea, idleHint;
 export function initializeUI() {
   coinCount = document.getElementById('coinCount');
   face = document.getElementById('face');
-  hat = document.getElementById('hat');
   openShop = document.getElementById('openShop');
   shopModal = document.getElementById('shopModal');
   closeShop = document.getElementById('closeShop');
@@ -49,8 +48,20 @@ export function initializeUI() {
 // Main render function
 export function render(state) {
   coinCount.textContent = state.coins;
+  updateCostumeImages(state);
   updateFigureImages(state);
   renderOwnedPlayButtons(state);
+}
+
+// Costumes may change the face and body images
+export function updateCostumeImages(state) {
+  const equippedCostumeId = state.equipped ? state.equipped.costume : null;
+  const costumeItem = SHOP_ITEMS.find(it => it.kind === 'costume' && it.id === equippedCostumeId);
+
+  // Update face image
+  if (face && costumeItem && costumeItem.face) {
+    face.src = costumeItem.face;
+  }
 }
 
 // Update which images are shown in the stacked figure
@@ -58,9 +69,6 @@ function updateFigureImages(state) {
   // Check if smile needs to be removed
   if (face && face.classList.contains('smile')) {
     face.classList.remove('smile');
-  }
-  if (hat && hat.classList.contains('smile')) {
-    hat.classList.remove('smile');
   }
   // Remove animation tap effects
   if (drumTapImg) drumTapImg.style.opacity = '0';
@@ -124,7 +132,6 @@ export function showCoinAnimation(n = 1) {
 export function showTapVisual(id) {
   if (id === 'kick') {
     if (face) face.classList.add('smile');
-    if (hat) hat.classList.add('smile');
     if (drumImg) drumImg.style.opacity = '0';
     if (drumTapImg) drumTapImg.style.opacity = '1';
   } else if (id === 'cymbal') {
