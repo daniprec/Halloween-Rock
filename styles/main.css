@@ -214,6 +214,8 @@ body {
   padding: 8px 14px;
   display: flex;
   justify-content: center;
+  position: relative;
+  bottom: 10%;
 }
 
 .play-row {
