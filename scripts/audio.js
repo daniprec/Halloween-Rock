@@ -103,6 +103,34 @@ export async function loadAllSamples() {
   }
 }
 
+// --- Dynamic sample mapping helpers --------------------------------------
+/**
+ * Set the sample URL used for a logical instrument id (e.g. 'cymbal', 'tom').
+ * If `sampleUrl` is truthy the sample will be loaded (best-effort).
+ */
+export async function setInstrumentSample(instrumentId, sampleUrl) {
+  try {
+    instrumentToSample[instrumentId] = sampleUrl || undefined;
+    if (sampleUrl) await loadSampleURL(sampleUrl);
+  } catch (e) {
+    console.warn('setInstrumentSample failed', e);
+  }
+}
+
+/**
+ * Reset the instrument sample mapping back to the default declared in SHOP_ITEMS.
+ */
+export async function resetInstrumentSample(instrumentId) {
+  try {
+    const def = SHOP_ITEMS.find(s => s.id === instrumentId && s.sample);
+    const url = def ? def.sample : undefined;
+    instrumentToSample[instrumentId] = url;
+    if (url) await loadSampleURL(url);
+  } catch (e) {
+    console.warn('resetInstrumentSample failed', e);
+  }
+}
+
 // --- Playback --------------------------------------------------------------
 export function playInstrument(instrumentId) {
   // Hot path: no decode, no fetch, minimal branching.

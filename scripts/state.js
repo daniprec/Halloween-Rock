@@ -4,8 +4,8 @@ const STORAGE_KEY = 'halloween-rock:v1';
 const defaultState = {
   coins: 0,
   shopShown: false,
-  owned: { drums: ['kick'], hats: [], memes: [] },
-  equipped: { costume: null, meme: null },
+  owned: { drums: ['kick'], hats: [] },
+  equipped: { costume: null, skins: {} },
   version: 1
 };
 
@@ -17,7 +17,7 @@ export const SHOP_ITEMS = [
   { id: 'snare', kind: 'drum', name: 'Caja', price: 50, icon: 'public/images/icon_snare.png', sample: 'public/audio/snare.wav' },
   { id: 'vampire', kind: 'costume', name: 'Disfraz de Vampiro', price: 100, face: 'y', body: 'y' },
   { id: 'gnome', kind: 'costume', name: 'Disfraz de Gnomo', price: 200, face: 'y', body: 'y', armRight: 'y', armLeft: 'y' },
-  { id: 'bombardino', kind: 'drum-skin', name: 'Plato: Bombardino', price: 20, icon: 'public/images/icon_cymbal.png', sample: 'public/audio/bombardino.wav' },
+  { id: 'bombardino', kind: 'drum-skin', name: 'Plato: Bombardino', price: 20, icon: 'public/images/icon_cymbal.png', sample: 'public/audio/bombardino.wav', target: 'cymbal', image: 'public/images/cymbal_bombardino.png', tap: 'public/images/cymbal_tap_bombardino.png'},
 ];
 
 export function loadState() {
@@ -53,7 +53,24 @@ export function buyItem(state, item) {
 }
 
 export function equipItem(state, item) {
-  state.equipped = state.equipped || { drum: null, costume: null, meme: null };
+  // Ensure equipped structure
+  state.equipped = state.equipped || { drum: null, costume: null, skins: {} };
+
+  // Skin items target an instrument (item.target should be provided)
+  if (item && typeof item.kind === 'string' && item.kind.endsWith('-skin')) {
+    const target = item.target;
+    if (!target) return state;
+    if (!state.equipped.skins) state.equipped.skins = {};
+    if (item.id == null) {
+      // unequip
+      delete state.equipped.skins[target];
+    } else {
+      state.equipped.skins[target] = item.id;
+    }
+    return state;
+  }
+
+  // Default: set by kind (costume, drum, etc.)
   state.equipped[item.kind] = item.id;
   return state;
 }
