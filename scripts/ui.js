@@ -356,7 +356,10 @@ export function renderShop(state) {
   
   SHOP_ITEMS.forEach(it => {
     // If the item is a drum and the user owns it, skip showing it in the shop
-    if (it.kind === 'drum' && (state.owned.drums || []).includes(it.id)) {
+    // Also hide upgrades after purchase (one-time upgrades should disappear)
+    const ownedDrums = (state.owned && state.owned.drums) || [];
+    const ownedUpgrades = (state.owned && state.owned.upgrades) || [];
+    if ((it.kind === 'drum' && ownedDrums.includes(it.id)) || (it.kind === 'upgrade' && ownedUpgrades.includes(it.id))) {
       return;
     }
 

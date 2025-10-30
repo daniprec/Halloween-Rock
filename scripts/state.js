@@ -4,7 +4,7 @@ const STORAGE_KEY = 'halloween-rock:v1';
 const defaultState = {
   coins: 0,
   shopShown: false,
-  owned: { drums: ['kick'], hats: [] },
+  owned: { drums: ['kick'], upgrades: [], costumes: [] , skins: [] },
   equipped: { costume: null, skins: {} },
   version: 1
 };
@@ -15,12 +15,13 @@ export const SHOP_ITEMS = [
   { id: 'tom', kind: 'drum', name: 'Tom', price: 5, icon: 'public/images/icon_tom.png', sample: 'public/audio/tom.wav' },
   { id: 'cymbal', kind: 'drum', name: 'Plato', price: 20, icon: 'public/images/icon_cymbal.png', sample: 'public/audio/cymbal.wav' },
   { id: 'snare', kind: 'drum', name: 'Caja', price: 50, icon: 'public/images/icon_snare.png', sample: 'public/audio/snare.wav' },
-  { id: 'vampire', kind: 'costume', name: 'Disfraz de Vampiro', price: 10, face: 'y', body: 'y' },
-  { id: 'gnome', kind: 'costume', name: 'Disfraz de Gnomo', price: 50, face: 'y', body: 'y', armRight: 'y', armLeft: 'y' },
-  { id: 'goomba', kind: 'drum-skin', name: 'Tom: Goomba', price: 50, sample: 'public/audio/goomba.wav', target: 'tom', image: 'public/images/tom_goomba.png', tap: 'public/images/tom_tap_goomba.png'},
-  { id: 'bombardino', kind: 'drum-skin', name: 'Plato: Bombardino', price: 100, sample: 'public/audio/bombardino.wav', target: 'cymbal', image: 'public/images/cymbal_bombardino.png', tap: 'public/images/cymbal_tap_bombardino.png'},
-  { id: 'oiia', kind: 'drum-skin', name: 'Bombo: OIIA', price: 200, sample: 'public/audio/oiia.wav', target: 'kick', image: 'public/images/drum_oiia.png', tap: 'public/images/drum_tap_oiia.gif'},
-  { id: 'kolog', kind: 'drum-skin', name: 'Caja: Kolog', price: 150, sample: 'public/audio/kolog.wav', target: 'snare', image: 'public/images/snare_kolog.png', tap: 'public/images/snare_tap_kolog.png'}
+  { id: 'double', kind: 'upgrade', name: 'Ganancias x2', price: 100 },
+  { id: 'vampire', kind: 'costume', name: 'Disfraz de Vampiro', price: 60, face: 'y', body: 'y' },
+  { id: 'gnome', kind: 'costume', name: 'Disfraz de Gnomo', price: 120, face: 'y', body: 'y', armRight: 'y', armLeft: 'y' },
+  { id: 'goomba', kind: 'drum-skin', name: 'Goomba (Tom)', price: 30, sample: 'public/audio/goomba.wav', target: 'tom', image: 'public/images/tom_goomba.png', tap: 'public/images/tom_tap_goomba.png'},
+  { id: 'kolog', kind: 'drum-skin', name: 'Kolog (Caja)', price: 40, sample: 'public/audio/kolog.wav', target: 'snare', image: 'public/images/snare_kolog.png', tap: 'public/images/snare_tap_kolog.png'},
+  { id: 'bombardino', kind: 'drum-skin', name: 'Bombardino (Plato)', price: 100, sample: 'public/audio/bombardino.wav', target: 'cymbal', image: 'public/images/cymbal_bombardino.png', tap: 'public/images/cymbal_tap_bombardino.png'},
+  { id: 'oiia', kind: 'drum-skin', name: 'OIIA (Bombo)', price: 200, sample: 'public/audio/oiia.wav', target: 'kick', image: 'public/images/drum_oiia.png', tap: 'public/images/drum_tap_oiia.gif'},
 ];
 
 export function loadState() {
@@ -36,7 +37,15 @@ export function saveState(state) {
 }
 
 export function giveCoin(state, n = 1) {
-  state.coins = (state.coins || 0) + n;
+  // Apply any coin multipliers provided by upgrades (e.g. 'double')
+  try {
+    const upgrades = (state.owned && state.owned.upgrades) || [];
+    const multiplier = upgrades.includes('double') ? 2 : 1;
+    state.coins = (state.coins || 0) + (n * multiplier);
+  } catch (e) {
+    // fallback: simple increment
+    state.coins = (state.coins || 0) + n;
+  }
   return state;
 }
 
