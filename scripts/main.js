@@ -7,7 +7,6 @@ import {
   renderShop,
   openShopModal,
   closeShopModal,
-  showCoinAnimation,
   showTapVisual,
   hideIdleHint,
   resetIdleTimer,
@@ -25,7 +24,6 @@ function playAndShow(id) {
   showTapVisual(id);
   // Award coin
   giveCoin(state, 1);
-  showCoinAnimation(1);
   // Remove idle hint
   hideIdleHint();
   resetIdleTimer();
@@ -61,7 +59,7 @@ function init() {
   });
   
   closeShop.addEventListener('click', () => {
-    closeShopModal();
+    closeShopModal(state);
   });
   
   // Owned instrument play buttons (event delegation)
