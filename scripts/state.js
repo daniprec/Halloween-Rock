@@ -14,7 +14,7 @@ export const SHOP_ITEMS = [
   { id: 'tom', kind: 'drum', name: 'Tom', price: 0, icon: 'public/images/icon_tom.png', sample: 'public/audio/tom.wav' },
   { id: 'cymbal', kind: 'drum', name: 'Plato', price: 0, icon: 'public/images/icon_cymbal.png', sample: 'public/audio/cymbal.wav' },
   { id: 'snare', kind: 'drum', name: 'Caja', price: 0, icon: 'public/images/icon_snare.png', sample: 'public/audio/snare.wav' },
-  { id: 'costume', kind: 'costume', name: 'Gnomo', price: 0, face: 'public/images/face_gnome.png' },
+  { id: 'gnome', kind: 'costume', name: 'Gnomo', price: 0 },
 ];
 
 export function loadState() {
