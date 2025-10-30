@@ -15,12 +15,10 @@
       </div>
     </div>
 
-  <div id="updateBanner" class="update-banner"><span>New version available</span><button id="reloadBtn">Reload</button></div>
-
     <main class="play-area">
       <div class="doodle" id="doodle">
         <!-- layered character composed of multiple same-size images (body, arms, drum, face).
-             Images are centered and absolutely stacked so they align regardless of viewport. -->
+              Images are centered and absolutely stacked so they align regardless of viewport. -->
         <div class="stack" id="figureStack" aria-hidden="false">
           <img id="bodyImg" src="public/images/body.png" alt="body" />
           <img id="armLeftImg" src="public/images/arm_left.png" alt="arm left" />
@@ -51,7 +49,6 @@
         <div id="ownedPlayRow" style="display:flex;gap:8px;margin-left:4px"></div>
       </div>
     </div>
-  </div>
 
   <div id="shopModal" class="modal">
     <div class="modal-card">
@@ -63,55 +60,5 @@
   <!-- Main application script -->
   <script type="module" src="scripts/main.js"></script>
 
-  <script>
-    // Register service worker for offline caching (if supported)
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-  // register the service worker using a relative path so scope respects the current base
-  navigator.serviceWorker.register('sw.js').then(reg => {
-          console.log('Service worker registered:', reg.scope)
-
-          const showUpdateBanner = () => {
-            const banner = document.getElementById('updateBanner')
-            const reloadBtn = document.getElementById('reloadBtn')
-            if (!banner || !reloadBtn) return
-            banner.style.display = 'flex'
-            reloadBtn.onclick = () => {
-              // Ask the waiting worker to skipWaiting and activate
-              if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' })
-            }
-          }
-
-          // If there's already a waiting worker, show the banner
-          if (reg.waiting) {
-            showUpdateBanner()
-          }
-
-          // Listen for updates found (new service worker installing)
-          reg.addEventListener('updatefound', () => {
-            const inst = reg.installing
-            inst.addEventListener('statechange', () => {
-              if (inst.state === 'installed') {
-                // A new SW is installed. If there's a controller, show update banner.
-                if (navigator.serviceWorker.controller) showUpdateBanner()
-              }
-            })
-          })
-
-        }).catch(err => console.warn('SW registration failed:', err))
-
-        // When a new service worker takes control, reload to use the new version
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-          window.location.reload()
-        })
-      })
-    }
-
-    // Note: Clear-cache debug button removed for security. To clear caches yourself:
-    // 1) Open DevTools -> Application -> Service Workers -> Unregister the service worker.
-    // 2) Application -> Storage -> Clear site data (this clears Cache Storage and Local Storage).
-    // Or run this in the Console:
-    // navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())); caches.keys().then(ks=>Promise.all(ks.map(k=>caches.delete(k)))); localStorage.removeItem('halloween-rock:v1')
-  </script>
 </body>
 </html>
