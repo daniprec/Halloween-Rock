@@ -252,7 +252,7 @@ export function renderShop(state) {
     row.className = 'item';
     
     const left = document.createElement('div');
-    left.innerHTML = `<div><strong>${it.name}</strong><div class='small'>${it.price} coins</div></div>`;
+    left.innerHTML = `<div><strong>${it.name}</strong><div class='small'>${it.price} monedas</div></div>`;
     
     const right = document.createElement('div');
     const owned = (state.owned[it.kind + 's'] || []).includes(it.id);

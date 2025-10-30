@@ -14,8 +14,8 @@ export const SHOP_ITEMS = [
   { id: 'kick', kind: 'drum', name: 'Bombo', price: 0, icon: 'public/images/icon_kick.png', sample: 'public/audio/kick.wav' },
   { id: 'tom', kind: 'drum', name: 'Tom', price: 5, icon: 'public/images/icon_tom.png', sample: 'public/audio/tom.wav' },
   { id: 'cymbal', kind: 'drum', name: 'Plato', price: 20, icon: 'public/images/icon_cymbal.png', sample: 'public/audio/cymbal.wav' },
-  { id: 'snare', kind: 'drum', name: 'Caja', price: 100, icon: 'public/images/icon_snare.png', sample: 'public/audio/snare.wav' },
-  { id: 'gnome', kind: 'costume', name: 'Gnomo', price: 500, face: 'y', body: 'y', armRight: 'y', armLeft: 'y' },
+  { id: 'snare', kind: 'drum', name: 'Caja', price: 50, icon: 'public/images/icon_snare.png', sample: 'public/audio/snare.wav' },
+  { id: 'gnome', kind: 'costume', name: 'Disfraz de Gnomo', price: 500, face: 'y', body: 'y', armRight: 'y', armLeft: 'y' },
 ];
 
 export function loadState() {
