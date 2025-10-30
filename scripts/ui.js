@@ -164,30 +164,14 @@ export function updateCostumeImages(state) {
     }
   } else {
     // Reset to default images
-    if (face) {
-      face.src = 'public/images/face.png';
-    }
-    if (bodyImg) {
-      bodyImg.src = 'public/images/body.png';
-    }
-    if (armRightImg) {
-      armRightImg.src = 'public/images/arm_right.png';
-    }
-    if (armLeftImg) {
-      armLeftImg.src = 'public/images/arm_left.png';
-    }
-    if (armLeftCymbalImg) {
-      armLeftCymbalImg.src = 'public/images/arm_left_cymbal.png';
-    }
-    if (armLeftTomImg) {
-      armLeftTomImg.src = 'public/images/arm_left_tom.png';
-    }
-    if (armRightTomImg) {
-      armRightTomImg.src = 'public/images/arm_right_tom.png';
-    }
-    if (armRightSnareImg) {
-      armRightSnareImg.src = 'public/images/arm_right_snare.png';
-    }
+    if (face) {face.src = 'public/images/face.png';}
+    if (bodyImg) {bodyImg.src = 'public/images/body.png';}
+    if (armRightImg) {armRightImg.src = 'public/images/arm_right.png';}
+    if (armLeftImg) {armLeftImg.src = 'public/images/arm_left.png';}
+    if (armLeftCymbalImg) {armLeftCymbalImg.src = 'public/images/arm_left_cymbal.png';}
+    if (armLeftTomImg) {armLeftTomImg.src = 'public/images/arm_left_tom.png';}
+    if (armRightTomImg) {armRightTomImg.src = 'public/images/arm_right_tom.png';}
+    if (armRightSnareImg) {armRightSnareImg.src = 'public/images/arm_right_snare.png';}
   }
 }
 
@@ -326,6 +310,12 @@ export function renderShop(state) {
         if (!result.success) {
           alert(result.message);
           return;
+        }
+        // Equip the item by default after purchase
+        try {
+          stateEquipItem(state, it);
+        } catch (e) {
+          console.warn('auto-equip after purchase failed', e);
         }
         saveState(state);
         render(state);
