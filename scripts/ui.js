@@ -116,6 +116,10 @@ export function render(state) {
       idleHint.textContent = '¡Compra nuevos instrumentos en Mejoras!';
       idleHint.classList.add('show');
     }
+
+    if (alreadyPurchased) {
+      idleHint.classList.remove('show');
+    }
   } catch (e) {
     // non-fatal; UI should still render
     console.warn('shop reveal check failed', e);
