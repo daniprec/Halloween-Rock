@@ -100,30 +100,30 @@ export function updateCostumeImages(state) {
 
   // Update face image
   if (costumeItem) {
-    if (face) {
+    if (face && costumeItem.face) {
       face.src = `public/images/face_${costumeItem.id}.png`;
     }
     // Update body image
-    if (bodyImg) {
+    if (bodyImg && costumeItem.body) {
       bodyImg.src = `public/images/body_${costumeItem.id}.png`;
     }
     // All arms
-    if (armRightImg) {
+    if (armRightImg && costumeItem.armRight) {
       armRightImg.src = `public/images/arm_right_${costumeItem.id}.png`;
     }
-    if (armLeftImg) {
+    if (armLeftImg && costumeItem.armLeft) {
       armLeftImg.src = `public/images/arm_left_${costumeItem.id}.png`;
     }
-    if (armLeftCymbalImg) {
+    if (armLeftCymbalImg && costumeItem.armLeft) {
       armLeftCymbalImg.src = `public/images/arm_left_cymbal_${costumeItem.id}.png`;
     }
-    if (armLeftTomImg) {
+    if (armLeftTomImg && costumeItem.armLeft) {
       armLeftTomImg.src = `public/images/arm_left_tom_${costumeItem.id}.png`;
     }
-    if (armRightTomImg) {
+    if (armRightTomImg && costumeItem.armRight) {
       armRightTomImg.src = `public/images/arm_right_tom_${costumeItem.id}.png`;
     }
-    if (armRightSnareImg) {
+    if (armRightSnareImg && costumeItem.armRight) {
       armRightSnareImg.src = `public/images/arm_right_snare_${costumeItem.id}.png`;
     }
   }
