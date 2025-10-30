@@ -68,6 +68,27 @@ function init() {
       playAndShow(instrumentId);
     }
   });
+
+  // Debug / cheat key: press 'f' to get 1000 coins (ignored when typing in inputs)
+  document.addEventListener('keydown', (e) => {
+    try {
+      const active = document.activeElement;
+      if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) return;
+      if (e.key === 'f' || e.key === 'F') {
+        giveCoin(state, 1000);
+        saveState(state);
+        render(state);
+        // small toast confirmation
+        const toast = document.createElement('div');
+        toast.textContent = '+1000 monedas';
+        toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:grey;padding:8px 12px;border-radius:8px;z-index:9999';
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 1400);
+      }
+    } catch (err) {
+      console.warn('cheat key handler failed', err);
+    }
+  });
   
   // Expose state for debugging
   window._hr = { state, saveState, loadState };

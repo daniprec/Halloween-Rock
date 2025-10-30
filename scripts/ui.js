@@ -139,28 +139,44 @@ export function updateCostumeImages(state) {
   if (costumeItem) {
     if (face && costumeItem.face) {
       face.src = `public/images/face_${costumeItem.id}.png`;
+    } else {
+      face.src = 'public/images/face.png';
     }
     if (bodyImg && costumeItem.body) {
       bodyImg.src = `public/images/body_${costumeItem.id}.png`;
+    } else {
+      bodyImg.src = 'public/images/body.png';
     }
     // All arms
     if (armRightImg && costumeItem.armRight) {
       armRightImg.src = `public/images/arm_right_${costumeItem.id}.png`;
+    } else {
+      armRightImg.src = 'public/images/arm_right.png';
     }
     if (armLeftImg && costumeItem.armLeft) {
       armLeftImg.src = `public/images/arm_left_${costumeItem.id}.png`;
+    } else {
+      armLeftImg.src = 'public/images/arm_left.png';
     }
     if (armLeftCymbalImg && costumeItem.armLeft) {
       armLeftCymbalImg.src = `public/images/arm_left_cymbal_${costumeItem.id}.png`;
+    } else {
+      armLeftCymbalImg.src = 'public/images/arm_left_cymbal.png';
     }
     if (armLeftTomImg && costumeItem.armLeft) {
       armLeftTomImg.src = `public/images/arm_left_tom_${costumeItem.id}.png`;
+    } else {
+      armLeftTomImg.src = 'public/images/arm_left_tom.png';
     }
     if (armRightTomImg && costumeItem.armRight) {
       armRightTomImg.src = `public/images/arm_right_tom_${costumeItem.id}.png`;
+    } else {
+      armRightTomImg.src = 'public/images/arm_right_tom.png';
     }
     if (armRightSnareImg && costumeItem.armRight) {
       armRightSnareImg.src = `public/images/arm_right_snare_${costumeItem.id}.png`;
+    } else {
+      armRightSnareImg.src = 'public/images/arm_right_snare.png';
     }
   } else {
     // Reset to default images
