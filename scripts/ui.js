@@ -135,12 +135,11 @@ export function updateCostumeImages(state) {
   const equippedCostumeId = state.equipped ? state.equipped.costume : null;
   const costumeItem = SHOP_ITEMS.find(it => it.kind === 'costume' && it.id === equippedCostumeId);
 
-  // Update face image
+  // Update all costume parts
   if (costumeItem) {
     if (face && costumeItem.face) {
       face.src = `public/images/face_${costumeItem.id}.png`;
     }
-    // Update body image
     if (bodyImg && costumeItem.body) {
       bodyImg.src = `public/images/body_${costumeItem.id}.png`;
     }
@@ -162,6 +161,32 @@ export function updateCostumeImages(state) {
     }
     if (armRightSnareImg && costumeItem.armRight) {
       armRightSnareImg.src = `public/images/arm_right_snare_${costumeItem.id}.png`;
+    }
+  } else {
+    // Reset to default images
+    if (face) {
+      face.src = 'public/images/face.png';
+    }
+    if (bodyImg) {
+      bodyImg.src = 'public/images/body.png';
+    }
+    if (armRightImg) {
+      armRightImg.src = 'public/images/arm_right.png';
+    }
+    if (armLeftImg) {
+      armLeftImg.src = 'public/images/arm_left.png';
+    }
+    if (armLeftCymbalImg) {
+      armLeftCymbalImg.src = 'public/images/arm_left_cymbal.png';
+    }
+    if (armLeftTomImg) {
+      armLeftTomImg.src = 'public/images/arm_left_tom.png';
+    }
+    if (armRightTomImg) {
+      armRightTomImg.src = 'public/images/arm_right_tom.png';
+    }
+    if (armRightSnareImg) {
+      armRightSnareImg.src = 'public/images/arm_right_snare.png';
     }
   }
 }
@@ -261,7 +286,27 @@ export function renderShop(state) {
       row.classList.add('owned');
       const isEquipped = state.equipped && state.equipped[it.kind] === it.id;
       if (isEquipped) {
-        right.innerHTML = '<span class="small">Equipped</span>';
+        // If this is a costume, allow the user to unequip it (reset to original)
+        if (it.kind === 'costume') {
+          const uneq = document.createElement('button');
+          uneq.textContent = 'Desequipar';
+          uneq.addEventListener('click', () => {
+            // Use the same stateEquipItem helper but set id to null to unequip
+            try {
+              stateEquipItem(state, { kind: it.kind, id: null });
+            } catch (e) {
+              // fallback: directly unset
+              state.equipped = state.equipped || {};
+              state.equipped[it.kind] = null;
+            }
+            saveState(state);
+            render(state);
+            renderShop(state);
+          });
+          right.appendChild(uneq);
+        } else {
+          right.innerHTML = '<span class="small">Equipado</span>';
+        }
       } else {
         const eq = document.createElement('button');
         eq.textContent = 'Equipar';
