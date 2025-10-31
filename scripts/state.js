@@ -20,9 +20,9 @@ export const SHOP_ITEMS = [
   { id: 'autocoin', kind: 'upgrade', name: '+1 moneda/segundo', price: 200, passive: 1 },
   { id: 'double', kind: 'upgrade', name: 'Ganancias x2', price: 500 },
   // Progressive multipliers: only show after previous unlocked
-  { id: 'triple', kind: 'upgrade', name: 'Ganancias x3', price: 2000, requires: 'double' },
-  { id: 'quintuple', kind: 'upgrade', name: 'Ganancias x5', price: 6000, requires: 'triple' },
-  { id: 'decuple', kind: 'upgrade', name: 'Ganancias x10', price: 20000, requires: 'quintuple' },
+  { id: 'triple', kind: 'upgrade', name: 'Ganancias x3', price: 1000, requires: 'double' },
+  { id: 'quintuple', kind: 'upgrade', name: 'Ganancias x5', price: 2000, requires: 'triple' },
+  { id: 'decuple', kind: 'upgrade', name: 'Ganancias x10', price: 4000, requires: 'quintuple' },
   // Costumes
   { id: 'sunglasses', kind: 'costume', name: 'Gafas de sol', price: 10, face: 'y' },
   { id: 'dante', kind: 'costume', name: 'Máscara de Dante', price: 40, face: 'y' },
