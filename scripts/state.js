@@ -5,7 +5,8 @@ const defaultState = {
   coins: 0,
   shopShown: false,
   // Give the user the graveyard background by default (owned & equipped)
-  owned: { drum: ['kick'], upgrade: [], costume: [], skin: [], background: 'graveyard' },
+  // `owned` entries are arrays (collections). `equipped.background` is a single id.
+  owned: { drum: ['kick'], upgrade: [], costume: [], skin: [], background: ['graveyard'] },
   equipped: { costume: null, skin: {}, background: 'graveyard' },
   version: 1.1
 };
@@ -80,12 +81,15 @@ export function buyItem(state, item) {
   }
   
   state.coins -= item.price;
-  // Map skin kinds to the unified `skin` owned array. Other kinds use the
-  // pluralized <kind>s key (drum, costume, upgrade, background).
   let key;
   if (item.kind && item.kind === 'skin') key = 'skin';
   else key = item.kind;
-  state.owned[key] = state.owned[key] || [];
+  // Ensure the owned collection is an array. Some older saved states or
+  // accidental mutations may have left a non-array value (string). Coerce
+  // to array to avoid runtime errors when pushing.
+  if (!Array.isArray(state.owned[key])) {
+    state.owned[key] = state.owned[key] ? [state.owned[key]] : [];
+  }
 
   if (!state.owned[key].includes(item.id)) {
     state.owned[key].push(item.id);
