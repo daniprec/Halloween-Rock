@@ -145,7 +145,7 @@ export function render(state, updateSkins = true, updateBody = true) {
   // Persist that we've shown it so it stays visible afterwards.
   try {
     const alreadyShown = !!state.shopShown;
-    const alreadyPurchased = (state.owned.drums || []).length > 1;
+    const alreadyPurchased = (state.owned.drum || []).length > 1;
     const reachedThreshold = (state.coins || 0) >= 5;
     if (openShop) {
       if (alreadyShown || reachedThreshold) {
@@ -202,11 +202,11 @@ export function renderCoinsOnly(state) {
 // Update instrument images based on equipped skins (general for any instrument)
 function updateInstrumentSkins(state) {
   try {
-    const skins = (state.equipped && state.equipped.skins) || {};
+    const skin = (state.equipped && state.equipped.skin) || {};
 
     // kick drum (DOM uses drumImg/drumTapImg)
-    if (skins.kick) {
-      const skinItem = SHOP_ITEMS.find(s => s.id === skins.kick);
+    if (skin.kick) {
+      const skinItem = SHOP_ITEMS.find(s => s.id === skin.kick);
       if (drumImg && skinItem && skinItem.image) drumImg.src = skinItem.image;
       if (drumTapImg && skinItem && skinItem.tap) {
         drumTapImg.src = skinItem.tap;
@@ -228,8 +228,8 @@ function updateInstrumentSkins(state) {
     }
 
     // cymbal
-    if (skins.cymbal) {
-      const skinItem = SHOP_ITEMS.find(s => s.id === skins.cymbal);
+    if (skin.cymbal) {
+      const skinItem = SHOP_ITEMS.find(s => s.id === skin.cymbal);
       if (cymbalImg && skinItem && skinItem.image) cymbalImg.src = skinItem.image;
       if (cymbalTapImg && skinItem && skinItem.tap) cymbalTapImg.src = skinItem.tap;
     } else {
@@ -238,8 +238,8 @@ function updateInstrumentSkins(state) {
     }
 
     // tom
-    if (skins.tom) {
-      const skinItem = SHOP_ITEMS.find(s => s.id === skins.tom);
+    if (skin.tom) {
+      const skinItem = SHOP_ITEMS.find(s => s.id === skin.tom);
       if (tomImg && skinItem && skinItem.image) tomImg.src = skinItem.image;
       if (tomTapImg && skinItem && skinItem.tap) tomTapImg.src = skinItem.tap;
     } else {
@@ -248,8 +248,8 @@ function updateInstrumentSkins(state) {
     }
 
     // snare
-    if (skins.snare) {
-      const skinItem = SHOP_ITEMS.find(s => s.id === skins.snare);
+    if (skin.snare) {
+      const skinItem = SHOP_ITEMS.find(s => s.id === skin.snare);
       if (snareImg && skinItem && skinItem.image) snareImg.src = skinItem.image;
       if (snareTapImg && skinItem && skinItem.tap) snareTapImg.src = skinItem.tap;
     } else {
@@ -264,13 +264,13 @@ function updateInstrumentSkins(state) {
 // Sync audio samples for currently equipped skins. This updates the sample mapping
 // so playInstrument uses the skin's sample for the target instrument.
 async function syncInstrumentAudio(state) {
-  const skins = (state.equipped && state.equipped.skins) || {};
+  const skin = (state.equipped && state.equipped.skin) || {};
 
   // For each instrument we know about, set or reset sample mapping
   const instruments = ['cymbal', 'tom', 'snare', 'kick'];
   for (const inst of instruments) {
     try {
-      const skinId = skins[inst];
+      const skinId = skin[inst];
       if (skinId) {
         const it = SHOP_ITEMS.find(s => s.id === skinId);
         if (it && it.sample) await setInstrumentSample(inst, it.sample);
@@ -370,7 +370,7 @@ function updateFigureImages(state) {
   if (armRightImg) armRightImg.style.opacity = '1';
   if (drumImg) drumImg.style.opacity = '1';
   // Opacity of the other instruments depends on ownership
-  const ownedDrums = state.owned.drums || [];
+  const ownedDrums = state.owned.drum || [];
   if (ownedDrums.includes('cymbal')) {
     if (cymbalImg) cymbalImg.style.opacity = '1';
   } else {
@@ -428,13 +428,42 @@ export function hideIdleHint() {
 
 // Shop modal
 export function renderShop(state) {
+  // Show completion percentage at the top-left of the modal, below header/buttons
+  const modalCard = shopModal && shopModal.querySelector('.modal-card');
+  // Compute purchasable items (items with a price > 0)
+  const purchasable = SHOP_ITEMS.filter(i => i.price && Number(i.price) > 0);
+  const total = purchasable.length;
+  let ownedCount = 0;
+  for (const it of purchasable) {
+    let owned = false;
+    if (it.kind && it.kind === 'skin') {
+      owned = !!(state.owned && state.owned.skin && state.owned.skin.includes(it.id));
+    } else {
+      const arr = (state.owned && state.owned[it.kind]) || [];
+      owned = arr.includes(it.id);
+    }
+    if (owned) ownedCount++;
+  }
+  const pct = total === 0 ? 100 : Math.round((ownedCount / total) * 100);
+  if (modalCard) {
+    let summary = modalCard.querySelector('#shopCompletion');
+    if (!summary) {
+      summary = document.createElement('div');
+      summary.id = 'shopCompletion';
+      summary.className = 'shop-completion';
+      // insert before itemsList so it appears under the header/buttons
+      modalCard.insertBefore(summary, itemsList);
+    }
+    summary.textContent = `Completado: ${pct}% (${ownedCount}/${total})`;
+  }
+
   itemsList.innerHTML = '';
   
   SHOP_ITEMS.forEach(it => {
     // If the item is a drum and the user owns it, skip showing it in the shop
     // Also hide upgrades after purchase (one-time upgrades should disappear)
-    const ownedDrums = (state.owned && state.owned.drums) || [];
-    const ownedUpgrades = (state.owned && state.owned.upgrades) || [];
+    const ownedDrums = (state.owned && state.owned.drum) || [];
+    const ownedUpgrades = (state.owned && state.owned.upgrade) || [];
     // Hide items the user already owns (drums) or one-time upgrades they bought
     if ((it.kind === 'drum' && ownedDrums.includes(it.id)) || (it.kind === 'upgrade' && ownedUpgrades.includes(it.id))) {
       return;
@@ -452,27 +481,33 @@ export function renderShop(state) {
     left.innerHTML = `<div><strong>${it.name}</strong><div class='small'>${it.price} monedas</div></div>`;
     
     const right = document.createElement('div');
-    const owned = (state.owned[it.kind + 's'] || []).includes(it.id);
+    // Owned detection: skin are stored under state.owned.skin, other kinds use <kind>s
+    let owned = false;
+    if (it.kind && it.kind === 'skin') {
+      owned = !!(state.owned && state.owned.skin && state.owned.skin.includes(it.id));
+    } else {
+      owned = (state.owned && state.owned[it.kind] || []).includes(it.id);
+    }
 
     if (owned) {
       row.classList.add('owned');
-      // Determine equipped state. Skins are stored in state.equipped.skins[target]
+      // Determine equipped state. Skins are stored in state.equipped.skin[target]
       let isEquipped = false;
-      if (it.kind && it.kind.endsWith('-skin')) {
+      if (it.kind && it.kind === 'skin') {
         const target = it.target;
-        isEquipped = !!(state.equipped && state.equipped.skins && state.equipped.skins[target] === it.id);
+        isEquipped = !!(state.equipped && state.equipped.skin && state.equipped.skin[target] === it.id);
       } else {
         isEquipped = state.equipped && state.equipped[it.kind] === it.id;
       }
 
       if (isEquipped) {
         // Allow the user to unequip skins and costumes
-        if (it.kind === 'costume' || (it.kind && it.kind.endsWith('-skin'))) {
+        if (it.kind === 'costume' || (it.kind && it.kind === 'skin')) {
           const uneq = document.createElement('button');
           uneq.textContent = 'Desequipar';
           uneq.addEventListener('click', () => {
             try {
-              if (it.kind && it.kind.endsWith('-skin')) {
+              if (it.kind && it.kind === 'skin') {
                 // pass target so equipItem knows which skin to unset
                 stateEquipItem(state, { kind: it.kind, id: null, target: it.target });
               } else {
@@ -481,8 +516,8 @@ export function renderShop(state) {
             } catch (e) {
               // fallback
               state.equipped = state.equipped || {};
-              if (it.kind && it.kind.endsWith('-skin')) {
-                if (state.equipped.skins) delete state.equipped.skins[it.target];
+              if (it.kind && it.kind === 'skin') {
+                if (state.equipped.skin) delete state.equipped.skin[it.target];
               } else {
                 state.equipped[it.kind] = null;
               }
@@ -570,7 +605,7 @@ function renderOwnedPlayButtons(state) {
   const row = document.getElementById('ownedPlayRow');
   row.innerHTML = '';
   
-  const ownedDrums = state.owned.drums || [];
+  const ownedDrums = state.owned.drum || [];
 
 
   ownedDrums.forEach(id => {

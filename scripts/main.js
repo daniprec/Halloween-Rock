@@ -41,7 +41,7 @@ function updatePassiveIncome() {
     }
 
     // Compute passive income per second from owned upgrades
-    const ownedUpgrades = (state.owned && state.owned.upgrades) || [];
+    const ownedUpgrades = (state.owned && state.owned.upgrade) || [];
     let passive = 0;
     if (Array.isArray(SHOP_ITEMS)) {
       for (const it of SHOP_ITEMS) {
@@ -87,7 +87,7 @@ function playAndShow(id) {
   renderCoinsOnly(state);
   // Revert after 180ms
   setTimeout(() => {
-    // Only revert visual body changes (don't re-run skins/audio sync)
+    // Only revert visual body changes (don't re-run skin/audio sync)
     render(state, false, true);
   }, 500);
 }
@@ -103,7 +103,7 @@ function init() {
   // Initial render
   render(state);
 
-  // Start passive income if any owned upgrades provide it
+  // Start passive income if any owned upgrade provide it
   updatePassiveIncome();
   
   // Load audio samples

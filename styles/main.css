@@ -404,3 +404,12 @@ button {
   opacity: 1;
   transform: translate(-50%, -60%);
 }
+
+/* Small completion indicator shown in the shop modal */
+.shop-completion {
+  margin-top: 8px;
+  margin-bottom: 6px;
+  color: var(--grey);
+  font-size: 13px;
+  font-weight: 700;
+}
