@@ -46,31 +46,7 @@ export const SHOP_ITEMS = [
 
 export function loadState() {
   try {
-    const s = JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultState;
-    // Migration: older versions may have stored skin purchases under a key like
-    // 'skin' (because buyItem used item.kind+'s' blindly). Normalize any
-    // such keys into `owned.skin` so completion and ownership checks work.
-    try {
-      s.owned = s.owned || {};
-      s.owned.skin = s.owned.skin || [];
-      for (const it of SHOP_ITEMS) {
-        if (it.kind && it.kind === 'skin') {
-          const legacyKey = it.kind; // e.g. 'skin'
-          const legacyArr = s.owned[legacyKey];
-          if (Array.isArray(legacyArr)) {
-            for (const id of legacyArr) {
-              if (!s.owned.skin.includes(id)) s.owned.skin.push(id);
-            }
-            // remove legacy key to keep state clean
-            delete s.owned[legacyKey];
-          }
-        }
-      }
-    } catch (e) {
-      // non-fatal migration error; continue with raw state
-      console.warn('state migration failed', e);
-    }
-    return s;
+    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultState;
   } catch (e) {
     return defaultState;
   }
