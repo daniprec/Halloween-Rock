@@ -297,7 +297,12 @@ export function updateCostumeImages(state) {
       face.src = 'public/images/face.png';
     }
     if (bodyImg && costumeItem.body) {
-      bodyImg.src = `public/images/body_${costumeItem.id}.png`;
+      // Check if its a gif body (body: 'gif')
+      if (costumeItem.body === 'gif') {
+        bodyImg.src = `public/images/body_${costumeItem.id}.gif`;
+      } else {
+        bodyImg.src = `public/images/body_${costumeItem.id}.png`;
+      }
     } else {
       bodyImg.src = 'public/images/body.png';
     }
