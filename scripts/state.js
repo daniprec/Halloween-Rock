@@ -80,8 +80,6 @@ export function buyItem(state, item) {
   }
   
   state.coins -= item.price;
-  // Map skin kinds to the unified `skin` owned array. Other kinds use the
-  // pluralized <kind>s key (drum, costume, upgrade, background).
   let key;
   if (item.kind && item.kind === 'skin') key = 'skin';
   else key = item.kind;
