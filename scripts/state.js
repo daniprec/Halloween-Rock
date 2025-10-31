@@ -19,6 +19,10 @@ export const SHOP_ITEMS = [
   // Upgrades
   { id: 'autocoin', kind: 'upgrade', name: '+1 moneda/segundo', price: 200, passive: 1 },
   { id: 'double', kind: 'upgrade', name: 'Ganancias x2', price: 500 },
+  // Progressive multipliers: only show after previous unlocked
+  { id: 'triple', kind: 'upgrade', name: 'Ganancias x3', price: 2000, requires: 'double' },
+  { id: 'quintuple', kind: 'upgrade', name: 'Ganancias x5', price: 6000, requires: 'triple' },
+  { id: 'decuple', kind: 'upgrade', name: 'Ganancias x10', price: 20000, requires: 'quintuple' },
   // Costumes
   { id: 'sunglasses', kind: 'costume', name: 'Gafas de sol', price: 10, face: 'y' },
   { id: 'dante', kind: 'costume', name: 'Máscara de Dante', price: 40, face: 'y' },
@@ -53,7 +57,12 @@ export function giveCoin(state, n = 1) {
   // Apply any coin multipliers provided by upgrades (e.g. 'double')
   try {
     const upgrades = (state.owned && state.owned.upgrades) || [];
-    const multiplier = upgrades.includes('double') ? 2 : 1;
+    // priority: decuple > quintuple > triple > double
+    let multiplier = 1;
+    if (upgrades.includes('decuple')) multiplier = 10;
+    else if (upgrades.includes('quintuple')) multiplier = 5;
+    else if (upgrades.includes('triple')) multiplier = 3;
+    else if (upgrades.includes('double')) multiplier = 2;
     state.coins = (state.coins || 0) + (n * multiplier);
   } catch (e) {
     // fallback: simple increment
