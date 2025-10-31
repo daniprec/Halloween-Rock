@@ -41,7 +41,7 @@ export function initializeUI() {
   idleHint = document.createElement('div');
   idleHint.id = 'idleHint';
   idleHint.className = 'idle-hint';
-  idleHint.textContent = '¡Sube el volumen y después toca la batería para ganar monedas!';
+  idleHint.textContent = '¡Sube el volumen y después toca repetidamente el botón de abajo!';
   idleHint.classList.add('show');
   playArea.appendChild(idleHint);
 
@@ -118,7 +118,7 @@ export function render(state) {
 
     // Change idleHint message and show
     if (reachedThreshold && !alreadyPurchased) {
-      idleHint.textContent = '¡Compra nuevos instrumentos en Mejoras!';
+      idleHint.textContent = '¡Pulsa el botón de arriba y usa tus monedas para comprar nuevos instrumentos!';
       idleHint.classList.add('show');
     }
 
@@ -446,6 +446,8 @@ export function renderShop(state) {
         saveState(state);
         render(state);
         renderShop(state);
+  // If the app exposes an update for passive income, call it so upgrades take effect immediately
+  try { if (window._hr && typeof window._hr.updatePassiveIncome === 'function') window._hr.updatePassiveIncome(); } catch (e) {}
         
         // Show purchase confirmation
         const toast = document.createElement('div');
