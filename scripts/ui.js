@@ -435,7 +435,13 @@ export function renderShop(state) {
     // Also hide upgrades after purchase (one-time upgrades should disappear)
     const ownedDrums = (state.owned && state.owned.drums) || [];
     const ownedUpgrades = (state.owned && state.owned.upgrades) || [];
+    // Hide items the user already owns (drums) or one-time upgrades they bought
     if ((it.kind === 'drum' && ownedDrums.includes(it.id)) || (it.kind === 'upgrade' && ownedUpgrades.includes(it.id))) {
+      return;
+    }
+
+    // If an upgrade defines a `requires` id, only show it after the prerequisite upgrade is owned
+    if (it.kind === 'upgrade' && it.requires && !ownedUpgrades.includes(it.requires)) {
       return;
     }
 
