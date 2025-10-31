@@ -5,8 +5,8 @@ const defaultState = {
   coins: 0,
   shopShown: false,
   // Give the user the graveyard background by default (owned & equipped)
-  owned: { drums: ['kick'], upgrades: [], costumes: [], skins: [], backgrounds: ['graveyard'] },
-  equipped: { costume: null, skins: {}, background: 'graveyard' },
+  owned: { drum: ['kick'], upgrade: [], costume: [], skin: [], background: 'graveyard' },
+  equipped: { costume: null, skin: {}, background: 'graveyard' },
   version: 1.1
 };
 
@@ -30,14 +30,14 @@ export const SHOP_ITEMS = [
   { id: 'gnome', kind: 'costume', name: 'Disfraz de Mago', price: 300, face: 'y', body: 'y', armRight: 'y', armLeft: 'y', sample: 'public/audio/gnome.mp3' },
   { id: 'firecape', kind: 'costume', name: 'Capa de Llamas', price: 10000, body: 'gif', armLeft: 'y', sample: 'public/audio/runescape.mp3' },
   // Drum skins
-  { id: 'cursed', kind: 'drum-skin', name: 'Bombo Maldito', price: 666, sample: 'public/audio/jumpscare.mp3', target: 'kick', image: 'public/images/drum_cursed.png', tap: 'public/images/drum_tap_cursed.png'},
-  { id: 'oiia', kind: 'drum-skin', name: 'Bombo OIIA', price: 5000, sample: 'public/audio/oiia.mp3', target: 'kick', image: 'public/images/drum_oiia.png', tap: 'public/images/drum_tap_oiia.gif'},
-  { id: 'skull', kind: 'drum-skin', name: 'Tom de Calaveras', price: 130, sample: 'public/audio/skull.mp3', target: 'tom', image: 'public/images/tom_skull.png', tap: 'public/images/tom_tap_skull.png'},
-  { id: 'goomba', kind: 'drum-skin', name: 'Tom Goomba', price: 700, sample: 'public/audio/goomba.mp3', target: 'tom', image: 'public/images/tom_goomba.png', tap: 'public/images/tom_tap_goomba.png'},
-  { id: 'blood', kind: 'drum-skin', name: 'Plato de Sangre', price: 210, sample: 'public/audio/blood.mp3', target: 'cymbal', image: 'public/images/cymbal_blood.png', tap: 'public/images/cymbal_tap_blood.png'},
-  { id: 'bombardino', kind: 'drum-skin', name: 'Plato Bombardino', price: 3000, sample: 'public/audio/bombardino.mp3', target: 'cymbal', image: 'public/images/cymbal_bombardino.png', tap: 'public/images/cymbal_tap_bombardino.png'},
-  { id: 'ghost', kind: 'drum-skin', name: 'Caja Fantasma', price: 330, sample: 'public/audio/ghost.mp3', target: 'snare', image: 'public/images/snare_ghost.png', tap: 'public/images/snare_tap_ghost.png'},
-  { id: 'kolog', kind: 'drum-skin', name: 'Caja Kolog', price: 2500, sample: 'public/audio/kolog.mp3', target: 'snare', image: 'public/images/snare_kolog.png', tap: 'public/images/snare_tap_kolog.png'},
+  { id: 'cursed', kind: 'skin', name: 'Bombo Maldito', price: 666, sample: 'public/audio/jumpscare.mp3', target: 'kick', image: 'public/images/drum_cursed.png', tap: 'public/images/drum_tap_cursed.png'},
+  { id: 'oiia', kind: 'skin', name: 'Bombo OIIA', price: 5000, sample: 'public/audio/oiia.mp3', target: 'kick', image: 'public/images/drum_oiia.png', tap: 'public/images/drum_tap_oiia.gif'},
+  { id: 'skull', kind: 'skin', name: 'Tom de Calaveras', price: 130, sample: 'public/audio/skull.mp3', target: 'tom', image: 'public/images/tom_skull.png', tap: 'public/images/tom_tap_skull.png'},
+  { id: 'goomba', kind: 'skin', name: 'Tom Goomba', price: 700, sample: 'public/audio/goomba.mp3', target: 'tom', image: 'public/images/tom_goomba.png', tap: 'public/images/tom_tap_goomba.png'},
+  { id: 'blood', kind: 'skin', name: 'Plato de Sangre', price: 210, sample: 'public/audio/blood.mp3', target: 'cymbal', image: 'public/images/cymbal_blood.png', tap: 'public/images/cymbal_tap_blood.png'},
+  { id: 'bombardino', kind: 'skin', name: 'Plato Bombardino', price: 3000, sample: 'public/audio/bombardino.mp3', target: 'cymbal', image: 'public/images/cymbal_bombardino.png', tap: 'public/images/cymbal_tap_bombardino.png'},
+  { id: 'ghost', kind: 'skin', name: 'Caja Fantasma', price: 330, sample: 'public/audio/ghost.mp3', target: 'snare', image: 'public/images/snare_ghost.png', tap: 'public/images/snare_tap_ghost.png'},
+  { id: 'kolog', kind: 'skin', name: 'Caja Kolog', price: 2500, sample: 'public/audio/kolog.mp3', target: 'snare', image: 'public/images/snare_kolog.png', tap: 'public/images/snare_tap_kolog.png'},
   // Backgrounds (can be purchased and equipped via the shop)
   { id: 'graveyard', kind: 'background', name: 'Fondo: Cementerio', price: 0, image: 'public/background/graveyard.jpg' },
   { id: 'forest', kind: 'background', name: 'Fondo: Bosque', price: 30, image: 'public/background/forest.jpg' },
@@ -46,7 +46,31 @@ export const SHOP_ITEMS = [
 
 export function loadState() {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultState;
+    const s = JSON.parse(localStorage.getItem(STORAGE_KEY)) || defaultState;
+    // Migration: older versions may have stored skin purchases under a key like
+    // 'skin' (because buyItem used item.kind+'s' blindly). Normalize any
+    // such keys into `owned.skin` so completion and ownership checks work.
+    try {
+      s.owned = s.owned || {};
+      s.owned.skin = s.owned.skin || [];
+      for (const it of SHOP_ITEMS) {
+        if (it.kind && it.kind === 'skin') {
+          const legacyKey = it.kind; // e.g. 'skin'
+          const legacyArr = s.owned[legacyKey];
+          if (Array.isArray(legacyArr)) {
+            for (const id of legacyArr) {
+              if (!s.owned.skin.includes(id)) s.owned.skin.push(id);
+            }
+            // remove legacy key to keep state clean
+            delete s.owned[legacyKey];
+          }
+        }
+      }
+    } catch (e) {
+      // non-fatal migration error; continue with raw state
+      console.warn('state migration failed', e);
+    }
+    return s;
   } catch (e) {
     return defaultState;
   }
@@ -57,15 +81,15 @@ export function saveState(state) {
 }
 
 export function giveCoin(state, n = 1) {
-  // Apply any coin multipliers provided by upgrades (e.g. 'double')
+  // Apply any coin multipliers provided by upgrade (e.g. 'double')
   try {
-    const upgrades = (state.owned && state.owned.upgrades) || [];
+    const upgrade = (state.owned && state.owned.upgrade) || [];
     // priority: decuple > quintuple > triple > double
     let multiplier = 1;
-    if (upgrades.includes('decuple')) multiplier = 10;
-    else if (upgrades.includes('quintuple')) multiplier = 5;
-    else if (upgrades.includes('triple')) multiplier = 3;
-    else if (upgrades.includes('double')) multiplier = 2;
+    if (upgrade.includes('decuple')) multiplier = 10;
+    else if (upgrade.includes('quintuple')) multiplier = 5;
+    else if (upgrade.includes('triple')) multiplier = 3;
+    else if (upgrade.includes('double')) multiplier = 2;
     state.coins = (state.coins || 0) + (n * multiplier);
   } catch (e) {
     // fallback: simple increment
@@ -80,10 +104,15 @@ export function buyItem(state, item) {
   }
   
   state.coins -= item.price;
-  state.owned[item.kind + 's'] = state.owned[item.kind + 's'] || [];
-  
-  if (!state.owned[item.kind + 's'].includes(item.id)) {
-    state.owned[item.kind + 's'].push(item.id);
+  // Map skin kinds to the unified `skin` owned array. Other kinds use the
+  // pluralized <kind>s key (drum, costume, upgrade, background).
+  let key;
+  if (item.kind && item.kind === 'skin') key = 'skin';
+  else key = item.kind;
+  state.owned[key] = state.owned[key] || [];
+
+  if (!state.owned[key].includes(item.id)) {
+    state.owned[key].push(item.id);
   }
   
   return { success: true };
@@ -91,18 +120,18 @@ export function buyItem(state, item) {
 
 export function equipItem(state, item) {
   // Ensure equipped structure
-  state.equipped = state.equipped || { drum: null, costume: null, skins: {} };
+  state.equipped = state.equipped || { drum: null, costume: null, skin: {} };
 
   // Skin items target an instrument (item.target should be provided)
-  if (item && typeof item.kind === 'string' && item.kind.endsWith('-skin')) {
+  if (item && typeof item.kind === 'string' && item.kind === 'skin') {
     const target = item.target;
     if (!target) return state;
-    if (!state.equipped.skins) state.equipped.skins = {};
+    if (!state.equipped.skin) state.equipped.skin = {};
     if (item.id == null) {
       // unequip
-      delete state.equipped.skins[target];
+      delete state.equipped.skin[target];
     } else {
-      state.equipped.skins[target] = item.id;
+      state.equipped.skin[target] = item.id;
     }
     return state;
   }
