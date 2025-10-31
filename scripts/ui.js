@@ -537,7 +537,11 @@ export function renderShop(state) {
           // Equip the item (skin or normal)
           stateEquipItem(state, it);
           // Play preview of its sample if available
-          try { if (it.sample) playSampleUrl(it.sample); } catch (e) {}
+          // If the item has a specific 'equip' sample, use that instead
+          try {
+            if (it.equip) playSampleUrl(it.equip);
+            else if (it.sample) playSampleUrl(it.sample);
+          } catch (e) {}
           saveState(state);
           render(state);
           renderShop(state);
@@ -553,19 +557,14 @@ export function renderShop(state) {
           alert(result.message);
           return;
         }
-          // Equip the item by default after purchase. Play normal kick sound
-          // when purchasing the cursed skin so the purchase feedback isn't
-          // the jumpscare — tapping afterwards will still use the jumpscare
-          // because equipping maps the instrument sample.
+          // Equip the item by default after purchase
+          // Play sample unless the item has the `equip` property (used for silent items)
           try {
             stateEquipItem(state, it);
-            if (it.sample) {
-              if (it.id === 'cursed') {
-                // play the basic kick sample for purchase feedback
-                try { playSampleUrl('public/audio/kick.wav'); } catch (e) {}
-              } else {
-                playSampleUrl(it.sample);
-              }
+            if (it.equip) {
+              playSampleUrl(it.equip);
+            } else if (it.sample) {
+              playSampleUrl(it.sample);
             }
           } catch (e) {
             console.warn('auto-equip after purchase failed', e);

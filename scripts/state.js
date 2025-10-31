@@ -31,7 +31,7 @@ export const SHOP_ITEMS = [
   { id: 'gnome', kind: 'costume', name: 'Disfraz de Mago', price: 300, face: 'y', body: 'y', armRight: 'y', armLeft: 'y', sample: 'public/audio/gnome.mp3' },
   { id: 'firecape', kind: 'costume', name: 'Capa de Llamas', price: 10000, body: 'gif', armLeft: 'y', sample: 'public/audio/runescape.mp3' },
   // Drum skins
-  { id: 'cursed', kind: 'skin', name: 'Bombo Maldito', price: 666, sample: 'public/audio/jumpscare.mp3', target: 'kick', image: 'public/images/drum_cursed.png', tap: 'public/images/drum_tap_cursed.png'},
+  { id: 'cursed', kind: 'skin', name: 'Bombo Maldito', price: 666, sample: 'public/audio/jumpscare.mp3', equip: 'public/audio/kick.wav', target: 'kick', image: 'public/images/drum_cursed.png', tap: 'public/images/drum_tap_cursed.png'},
   { id: 'oiia', kind: 'skin', name: 'Bombo OIIA', price: 5000, sample: 'public/audio/oiia.mp3', target: 'kick', image: 'public/images/drum_oiia.png', tap: 'public/images/drum_tap_oiia.gif'},
   { id: 'skull', kind: 'skin', name: 'Tom de Calaveras', price: 130, sample: 'public/audio/skull.mp3', target: 'tom', image: 'public/images/tom_skull.png', tap: 'public/images/tom_tap_skull.png'},
   { id: 'goomba', kind: 'skin', name: 'Tom Goomba', price: 700, sample: 'public/audio/goomba.mp3', target: 'tom', image: 'public/images/tom_goomba.png', tap: 'public/images/tom_tap_goomba.png'},
