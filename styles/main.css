@@ -110,8 +110,11 @@ body {
    relative path so it works when served from the project root. If you
    deploy the app from a subfolder, adjust the path accordingly. */
 .doodle {
-  /* Use absolute path so the URL resolves no matter where the CSS is served from */
-  --doodle-bg: url('/public/background/graveyard.jpg');
+  /* No hard-coded image path here. The JS `render()` sets `--doodle-bg` to a
+     fully-resolved URL at runtime (using document.baseURI) so backgrounds
+     work both locally and when deployed under subpaths. */
+  /* provide a sensible fallback color so the card isn't empty while JS runs */
+  --doodle-bg: radial-gradient(1200px 600px at 10% 20%, rgba(154,134,255,0.18), transparent 30%);
 }
 
 /* face used as an overlayed image inside the stacked figure; size is controlled by .stack */

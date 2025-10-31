@@ -121,10 +121,16 @@ export function render(state, updateSkins = true, updateBody = true) {
       if (bgId) {
         const bgItem = SHOP_ITEMS.find(s => s.id === bgId && s.kind === 'background');
         if (bgItem && bgItem.image) {
-          let imgPath = String(bgItem.image || '').trim();
-          if (imgPath && !imgPath.startsWith('/') && !/^https?:/.test(imgPath)) imgPath = '/' + imgPath;
-          // Add a subtle dark overlay for readability
-          doodleEl.style.setProperty('--doodle-bg', `linear-gradient(rgba(0,0,0,0.32), rgba(0,0,0,0.32)), url('${imgPath}')`);
+          // Resolve the image URL relative to the page base so it works when the
+          // app is deployed under a subpath (e.g. GitHub Pages or a nested URL).
+          try {
+            const resolved = new URL(bgItem.image, document.baseURI).href;
+            // Add a subtle dark overlay for readability
+            doodleEl.style.setProperty('--doodle-bg', `linear-gradient(rgba(0,0,0,0.32), rgba(0,0,0,0.32)), url('${resolved}')`);
+          } catch (e) {
+            // Fallback: use the raw path
+            doodleEl.style.setProperty('--doodle-bg', `linear-gradient(rgba(0,0,0,0.32), rgba(0,0,0,0.32)), url('${bgItem.image}')`);
+          }
         }
       } else {
         // Remove inline override so CSS default applies
