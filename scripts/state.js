@@ -24,7 +24,7 @@ export const SHOP_ITEMS = [
   { id: 'dante', kind: 'costume', name: 'Máscara de Dante', price: 40, face: 'y' },
   { id: 'vampire', kind: 'costume', name: 'Disfraz de Vampiro', price: 100, face: 'y', body: 'y' },
   { id: 'gnome', kind: 'costume', name: 'Disfraz de Mago', price: 300, face: 'y', body: 'y', armRight: 'y', armLeft: 'y', sample: 'public/audio/gnome.mp3' },
-  { id: 'firecape', kind: 'costume', name: 'Capa de Llamas', price: 10000, body: 'gif', sample: 'public/audio/runescape.mp3' },
+  { id: 'firecape', kind: 'costume', name: 'Capa de Llamas', price: 10000, body: 'gif', armLeft: 'y', sample: 'public/audio/runescape.mp3' },
   // Drum skins
   { id: 'cursed', kind: 'drum-skin', name: 'Bombo Maldito', price: 666, sample: 'public/audio/jumpscare.mp3', target: 'kick', image: 'public/images/drum_cursed.png', tap: 'public/images/drum_tap_cursed.png'},
   { id: 'oiia', kind: 'drum-skin', name: 'OIIA (Bombo)', price: 1000, sample: 'public/audio/oiia.mp3', target: 'kick', image: 'public/images/drum_oiia.png', tap: 'public/images/drum_tap_oiia.gif'},
