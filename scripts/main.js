@@ -10,7 +10,7 @@ import {
   closeShopModal,
   showTapVisual,
   hideIdleHint,
-  getUIElements
+  getUIElements,
 } from './ui.js';
 
 // Application state
@@ -96,25 +96,25 @@ function playAndShow(id) {
 function init() {
   // Initialize UI elements
   initializeUI();
-  
+
   // Get UI elements
   const { openShop, closeShop, playArea, coinCount } = getUIElements();
-  
+
   // Initial render
   render(state);
 
   // Start passive income if any owned upgrade provide it
   updatePassiveIncome();
-  
+
   // Load audio samples
   loadAllSamples().catch(e => console.warn('loading static samples failed', e));
-  
+
   // Event listeners
   openShop.addEventListener('click', () => {
     renderShop(state);
     openShopModal();
   });
-  
+
   closeShop.addEventListener('click', () => {
     closeShopModal(state);
   });
@@ -129,7 +129,9 @@ function init() {
             renderShop(state);
             openShopModal();
           }
-        } catch (e) { console.warn('openShopIfAvailable failed', e); }
+        } catch (e) {
+          console.warn('openShopIfAvailable failed', e);
+        }
       };
       coinCount.addEventListener('click', openShopIfAvailable);
 
@@ -139,7 +141,7 @@ function init() {
         const coinContainer = coinCount.closest && coinCount.closest('.coins');
         if (coinContainer) {
           coinContainer.style.cursor = 'pointer';
-          coinContainer.addEventListener('click', (e) => {
+          coinContainer.addEventListener('click', e => {
             // Avoid double-handling if the badge itself fired the event
             if (e.target === coinCount) return;
             openShopIfAvailable();
@@ -149,14 +151,16 @@ function init() {
         console.warn('setup coinContainer click failed', e);
       }
     }
-  } catch (e) { console.warn('setup coinCount click failed', e); }
-  
+  } catch (e) {
+    console.warn('setup coinCount click failed', e);
+  }
+
   // Owned instrument play buttons (event delegation)
   const ownedPlayRow = document.getElementById('ownedPlayRow');
-  ownedPlayRow.addEventListener('click', (e) => {
+  ownedPlayRow.addEventListener('click', e => {
     const btn = e.target.closest('.small-play-btn');
     if (!btn) return;
-    
+
     const instrumentId = btn.dataset.instrumentId;
     if (instrumentId) {
       playAndShow(instrumentId);
@@ -164,19 +168,24 @@ function init() {
   });
 
   // Debug / cheat key: press 'f' to get 1000 coins (ignored when typing in inputs)
-  document.addEventListener('keydown', (e) => {
+  document.addEventListener('keydown', e => {
     try {
       const active = document.activeElement;
-      if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)) return;
-  if (e.key === 'f' || e.key === 'F') {
-  giveCoin(state, 1000);
-  saveState(state);
-  // Only update coins UI for this cheat to avoid heavy work
-  renderCoinsOnly(state);
+      if (
+        active &&
+        (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable)
+      )
+        return;
+      if (e.key === 'f' || e.key === 'F') {
+        giveCoin(state, 1000);
+        saveState(state);
+        // Only update coins UI for this cheat to avoid heavy work
+        renderCoinsOnly(state);
         // small toast confirmation
         const toast = document.createElement('div');
         toast.textContent = '+1000 monedas';
-        toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:grey;padding:8px 12px;border-radius:8px;z-index:9999';
+        toast.style.cssText =
+          'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:grey;padding:8px 12px;border-radius:8px;z-index:9999';
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 1400);
       }
@@ -184,7 +193,7 @@ function init() {
       console.warn('cheat key handler failed', err);
     }
   });
-  
+
   // Expose state for debugging
   window._hr = { state, saveState, loadState, updatePassiveIncome };
 }
