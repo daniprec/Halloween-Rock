@@ -22,7 +22,8 @@ export const SHOP_ITEMS = [
   { id: 'gnome', kind: 'costume', name: 'Disfraz de Mago', price: 300, face: 'y', body: 'y', armRight: 'y', armLeft: 'y', sample: 'public/audio/gnome.mp3' },
   { id: 'goomba', kind: 'drum-skin', name: 'Goomba (Tom)', price: 200, sample: 'public/audio/goomba.mp3', target: 'tom', image: 'public/images/tom_goomba.png', tap: 'public/images/tom_tap_goomba.png'},
   { id: 'kolog', kind: 'drum-skin', name: 'Kolog (Caja)', price: 400, sample: 'public/audio/kolog.mp3', target: 'snare', image: 'public/images/snare_kolog.png', tap: 'public/images/snare_tap_kolog.png'},
-  { id: 'bombardino', kind: 'drum-skin', name: 'Bombardino (Plato)', price: 600, sample: 'public/audio/bombardino.mp3', target: 'cymbal', image: 'public/images/cymbal_bombardino.png', tap: 'public/images/cymbal_tap_bombardino.png'},
+  { id: 'cursed', kind: 'drum-skin', name: 'Bombo Maldito', price: 666, sample: 'public/audio/jumpscare.mp3', target: 'kick', image: 'public/images/drum_cursed.png', tap: 'public/images/drum_tap_cursed.png'},
+  { id: 'bombardino', kind: 'drum-skin', name: 'Bombardino (Plato)', price: 800, sample: 'public/audio/bombardino.mp3', target: 'cymbal', image: 'public/images/cymbal_bombardino.png', tap: 'public/images/cymbal_tap_bombardino.png'},
   { id: 'oiia', kind: 'drum-skin', name: 'OIIA (Bombo)', price: 1000, sample: 'public/audio/oiia.mp3', target: 'kick', image: 'public/images/drum_oiia.png', tap: 'public/images/drum_tap_oiia.gif'},
 ];
 
