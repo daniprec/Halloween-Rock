@@ -1,5 +1,5 @@
 // State management and persistence
-const STORAGE_KEY = 'halloween-rock:v1';
+const STORAGE_KEY = 'halloween-rock:v1.1';
 
 const defaultState = {
   coins: 0,
@@ -7,7 +7,7 @@ const defaultState = {
   // Give the user the graveyard background by default (owned & equipped)
   owned: { drums: ['kick'], upgrades: [], costumes: [], skins: [], backgrounds: ['graveyard'] },
   equipped: { costume: null, skins: {}, background: 'graveyard' },
-  version: 1
+  version: 1.1
 };
 
 // Shop items configuration
