@@ -98,7 +98,7 @@ function init() {
   initializeUI();
   
   // Get UI elements
-  const { openShop, closeShop, playArea } = getUIElements();
+  const { openShop, closeShop, playArea, coinCount } = getUIElements();
   
   // Initial render
   render(state);
@@ -118,6 +118,38 @@ function init() {
   closeShop.addEventListener('click', () => {
     closeShopModal(state);
   });
+
+  // Allow tapping the coin badge to open the shop (only when shop is available)
+  try {
+    if (coinCount) {
+      coinCount.style.cursor = 'pointer';
+      const openShopIfAvailable = () => {
+        try {
+          if (openShop && openShop.style.pointerEvents !== 'none') {
+            renderShop(state);
+            openShopModal();
+          }
+        } catch (e) { console.warn('openShopIfAvailable failed', e); }
+      };
+      coinCount.addEventListener('click', openShopIfAvailable);
+
+      // Also make the surrounding "Monedas" label clickable by wiring the
+      // closest .coins container (covers the text label and badge).
+      try {
+        const coinContainer = coinCount.closest && coinCount.closest('.coins');
+        if (coinContainer) {
+          coinContainer.style.cursor = 'pointer';
+          coinContainer.addEventListener('click', (e) => {
+            // Avoid double-handling if the badge itself fired the event
+            if (e.target === coinCount) return;
+            openShopIfAvailable();
+          });
+        }
+      } catch (e) {
+        console.warn('setup coinContainer click failed', e);
+      }
+    }
+  } catch (e) { console.warn('setup coinCount click failed', e); }
   
   // Owned instrument play buttons (event delegation)
   const ownedPlayRow = document.getElementById('ownedPlayRow');

@@ -135,7 +135,7 @@ export function render(state, updateSkins = true, updateBody = true) {
 
     // Change idleHint message and show
     if (reachedThreshold && !alreadyPurchased) {
-      idleHint.textContent = '¡Pulsa el botón de arriba y usa tus monedas para comprar nuevos instrumentos!';
+      idleHint.textContent = '¡Pulsa el botón Mejoras (arriba) y usa tus monedas para comprar nuevos instrumentos!';
       idleHint.classList.add('show');
     }
 
@@ -540,6 +540,7 @@ export function getUIElements() {
     openShop,
     closeShop,
     playArea,
-    shopModal
+    shopModal,
+    coinCount
   };
 }
