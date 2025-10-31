@@ -167,3 +167,23 @@ export function playInstrument(instrumentId) {
 
 export function getAudioContext() { return audioCtx; }
 export function setMasterVolume(v) { masterGain.gain.value = Math.max(0, Math.min(1, v)); }
+
+/**
+ * Play a sample by URL. Loads the sample if needed, then plays it once.
+ * This is a convenience for previewing item sounds.
+ */
+export async function playSampleUrl(url) {
+  if (!url) return;
+  try {
+    await loadSampleURL(url);
+    const buf = samples[url] || samples.default;
+    if (!buf) return;
+    const src = audioCtx.createBufferSource();
+    src.buffer = buf;
+    src.connect(masterGain);
+    src.onended = () => { try { src.disconnect(); } catch {} };
+    src.start();
+  } catch (e) {
+    console.warn('playSampleUrl failed', e);
+  }
+}

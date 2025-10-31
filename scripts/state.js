@@ -19,7 +19,7 @@ export const SHOP_ITEMS = [
   { id: 'sunglasses', kind: 'costume', name: 'Gafas de sol', price: 10, face: 'y' },
   { id: 'dante', kind: 'costume', name: 'Máscara de Dante', price: 40, face: 'y' },
   { id: 'vampire', kind: 'costume', name: 'Disfraz de Vampiro', price: 100, face: 'y', body: 'y' },
-  { id: 'gnome', kind: 'costume', name: 'Disfraz de Mago', price: 300, face: 'y', body: 'y', armRight: 'y', armLeft: 'y' },
+  { id: 'gnome', kind: 'costume', name: 'Disfraz de Mago', price: 300, face: 'y', body: 'y', armRight: 'y', armLeft: 'y', sample: 'public/audio/gnome.mp3' },
   { id: 'goomba', kind: 'drum-skin', name: 'Goomba (Tom)', price: 200, sample: 'public/audio/goomba.wav', target: 'tom', image: 'public/images/tom_goomba.png', tap: 'public/images/tom_tap_goomba.png'},
   { id: 'kolog', kind: 'drum-skin', name: 'Kolog (Caja)', price: 400, sample: 'public/audio/kolog.wav', target: 'snare', image: 'public/images/snare_kolog.png', tap: 'public/images/snare_tap_kolog.png'},
   { id: 'bombardino', kind: 'drum-skin', name: 'Bombardino (Plato)', price: 600, sample: 'public/audio/bombardino.wav', target: 'cymbal', image: 'public/images/cymbal_bombardino.png', tap: 'public/images/cymbal_tap_bombardino.png'},

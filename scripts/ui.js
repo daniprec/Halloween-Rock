@@ -1,6 +1,6 @@
 // UI rendering and animations
 import { SHOP_ITEMS, saveState, buyItem as stateBuyItem, equipItem as stateEquipItem } from './state.js';
-import { setInstrumentSample, resetInstrumentSample } from './audio.js';
+import { setInstrumentSample, resetInstrumentSample, playSampleUrl } from './audio.js';
 
 // DOM element references
 let coinCount, face, openShop, shopModal, closeShop, itemsList;
@@ -417,12 +417,10 @@ export function renderShop(state) {
         const eq = document.createElement('button');
         eq.textContent = 'Equipar';
         eq.addEventListener('click', () => {
-          // If this is a skin, ensure target is included when equipping
-          if (it.kind && it.kind.endsWith('-skin')) {
-            stateEquipItem(state, it);
-          } else {
-            stateEquipItem(state, it);
-          }
+          // Equip the item (skin or normal)
+          stateEquipItem(state, it);
+          // Play preview of its sample if available
+          try { if (it.sample) playSampleUrl(it.sample); } catch (e) {}
           saveState(state);
           render(state);
           renderShop(state);
@@ -438,12 +436,13 @@ export function renderShop(state) {
           alert(result.message);
           return;
         }
-        // Equip the item by default after purchase
-        try {
-          stateEquipItem(state, it);
-        } catch (e) {
-          console.warn('auto-equip after purchase failed', e);
-        }
+          // Equip the item by default after purchase and preview its sound
+          try {
+            stateEquipItem(state, it);
+            if (it.sample) playSampleUrl(it.sample);
+          } catch (e) {
+            console.warn('auto-equip after purchase failed', e);
+          }
         saveState(state);
         render(state);
         renderShop(state);
