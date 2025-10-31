@@ -204,6 +204,11 @@ body {
   z-index: 41;
 }
 
+/* When the cursed drum skin is active, ensure the tap overlay sits above all UI */
+#drumTapImg.tap--cursed {
+  z-index: 99999 !important;
+}
+
 #drumImg {
   z-index: 40;
 }
