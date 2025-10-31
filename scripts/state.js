@@ -31,10 +31,10 @@ export const SHOP_ITEMS = [
   { id: 'firecape', kind: 'costume', name: 'Capa de Llamas', price: 10000, body: 'gif', armLeft: 'y', sample: 'public/audio/runescape.mp3' },
   // Drum skins
   { id: 'cursed', kind: 'drum-skin', name: 'Bombo Maldito', price: 666, sample: 'public/audio/jumpscare.mp3', target: 'kick', image: 'public/images/drum_cursed.png', tap: 'public/images/drum_tap_cursed.png'},
-  { id: 'oiia', kind: 'drum-skin', name: 'OIIA (Bombo)', price: 1000, sample: 'public/audio/oiia.mp3', target: 'kick', image: 'public/images/drum_oiia.png', tap: 'public/images/drum_tap_oiia.gif'},
-  { id: 'goomba', kind: 'drum-skin', name: 'Goomba (Tom)', price: 200, sample: 'public/audio/goomba.mp3', target: 'tom', image: 'public/images/tom_goomba.png', tap: 'public/images/tom_tap_goomba.png'},
-  { id: 'bombardino', kind: 'drum-skin', name: 'Bombardino (Plato)', price: 800, sample: 'public/audio/bombardino.mp3', target: 'cymbal', image: 'public/images/cymbal_bombardino.png', tap: 'public/images/cymbal_tap_bombardino.png'},
-  { id: 'kolog', kind: 'drum-skin', name: 'Kolog (Caja)', price: 400, sample: 'public/audio/kolog.mp3', target: 'snare', image: 'public/images/snare_kolog.png', tap: 'public/images/snare_tap_kolog.png'},
+  { id: 'oiia', kind: 'drum-skin', name: 'Bombo: OIIA', price: 1000, sample: 'public/audio/oiia.mp3', target: 'kick', image: 'public/images/drum_oiia.png', tap: 'public/images/drum_tap_oiia.gif'},
+  { id: 'goomba', kind: 'drum-skin', name: 'Tom: Goomba', price: 200, sample: 'public/audio/goomba.mp3', target: 'tom', image: 'public/images/tom_goomba.png', tap: 'public/images/tom_tap_goomba.png'},
+  { id: 'bombardino', kind: 'drum-skin', name: 'Plato: Bombardino', price: 800, sample: 'public/audio/bombardino.mp3', target: 'cymbal', image: 'public/images/cymbal_bombardino.png', tap: 'public/images/cymbal_tap_bombardino.png'},
+  { id: 'kolog', kind: 'drum-skin', name: 'Caja: Kolog', price: 400, sample: 'public/audio/kolog.mp3', target: 'snare', image: 'public/images/snare_kolog.png', tap: 'public/images/snare_tap_kolog.png'},
   // Backgrounds (can be purchased and equipped via the shop)
   { id: 'graveyard', kind: 'background', name: 'Fondo: Cementerio', price: 0, image: 'public/background/graveyard.jpg' },
   { id: 'forest', kind: 'background', name: 'Fondo: Bosque', price: 30, image: 'public/background/forest.jpg' },
