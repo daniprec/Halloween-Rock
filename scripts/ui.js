@@ -208,10 +208,23 @@ function updateInstrumentSkins(state) {
     if (skins.kick) {
       const skinItem = SHOP_ITEMS.find(s => s.id === skins.kick);
       if (drumImg && skinItem && skinItem.image) drumImg.src = skinItem.image;
-      if (drumTapImg && skinItem && skinItem.tap) drumTapImg.src = skinItem.tap;
+      if (drumTapImg && skinItem && skinItem.tap) {
+        drumTapImg.src = skinItem.tap;
+        // Special-case: cursed skin should render above everything else.
+        try {
+          if (skinItem.id === 'cursed') {
+            drumTapImg.classList.add('tap--cursed');
+          } else {
+            drumTapImg.classList.remove('tap--cursed');
+          }
+        } catch (e) {}
+      }
     } else {
       if (drumImg) drumImg.src = 'public/images/drum.png';
-      if (drumTapImg) drumTapImg.src = 'public/images/drum_tap.png';
+      if (drumTapImg) {
+        drumTapImg.src = 'public/images/drum_tap.png';
+        try { drumTapImg.classList.remove('tap--cursed'); } catch (e) {}
+      }
     }
 
     // cymbal
@@ -494,10 +507,20 @@ export function renderShop(state) {
           alert(result.message);
           return;
         }
-          // Equip the item by default after purchase and preview its sound
+          // Equip the item by default after purchase. Play normal kick sound
+          // when purchasing the cursed skin so the purchase feedback isn't
+          // the jumpscare — tapping afterwards will still use the jumpscare
+          // because equipping maps the instrument sample.
           try {
             stateEquipItem(state, it);
-            if (it.sample) playSampleUrl(it.sample);
+            if (it.sample) {
+              if (it.id === 'cursed') {
+                // play the basic kick sample for purchase feedback
+                try { playSampleUrl('public/audio/kick.wav'); } catch (e) {}
+              } else {
+                playSampleUrl(it.sample);
+              }
+            }
           } catch (e) {
             console.warn('auto-equip after purchase failed', e);
           }
