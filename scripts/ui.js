@@ -91,7 +91,10 @@ export function initializeUI() {
 }
 
 // Main render function
-export function render(state) {
+// `render` may be expensive when called frequently. Callers can set
+// `updateSkins` or `updateBody` to false to skip heavier image/audio
+// sync work (useful for passive-income ticks).
+export function render(state, updateSkins = true, updateBody = true) {
   coinCount.textContent = state.coins;
 
   // Show the shop button when the user first reaches 5 coins.
@@ -130,15 +133,26 @@ export function render(state) {
     console.warn('shop reveal check failed', e);
   }
 
-  updateCostumeImages(state);
-  updateFigureImages(state);
-  updateInstrumentSkins(state);
+    if (updateBody) updateFigureImages(state);
+    if (updateSkins) {
+      updateCostumeImages(state);
+      updateInstrumentSkins(state);
+    }
   // Sync audio samples for equipped skins (best-effort, async)
   try {
     // fire-and-forget: don't await here to keep render sync
     syncInstrumentAudio(state).catch(e => console.warn('syncInstrumentAudio failed', e));
   } catch (e) {}
   renderOwnedPlayButtons(state);
+}
+
+// Lightweight update used for frequent passive ticks: only update coin UI.
+export function renderCoinsOnly(state) {
+  try {
+    if (coinCount) coinCount.textContent = state.coins;
+  } catch (e) {
+    console.warn('renderCoinsOnly failed', e);
+  }
 }
 
 // Update instrument images based on equipped skins (general for any instrument)
