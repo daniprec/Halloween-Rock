@@ -4,6 +4,7 @@ import { loadAllSamples, playInstrument, getAudioContext } from './audio.js';
 import {
   initializeUI,
   render,
+  renderCoinsOnly,
   renderShop,
   openShopModal,
   closeShopModal,
@@ -15,6 +16,21 @@ import {
 // Application state
 let state = loadState();
 let _passiveInterval = null;
+
+// Simple save-throttle to avoid writing localStorage every second.
+let _lastSave = 0;
+const SAVE_THROTTLE_MS = 5000; // save at most once every 5s
+function maybeSaveState() {
+  try {
+    const now = Date.now();
+    if (now - _lastSave > SAVE_THROTTLE_MS) {
+      saveState(state);
+      _lastSave = now;
+    }
+  } catch (e) {
+    console.warn('maybeSaveState failed', e);
+  }
+}
 
 function updatePassiveIncome() {
   try {
@@ -37,9 +53,17 @@ function updatePassiveIncome() {
 
     if (passive > 0) {
       _passiveInterval = setInterval(() => {
-        giveCoin(state, passive);
-        saveState(state);
-        render(state);
+        try {
+          // Don't award while the tab is hidden to save battery.
+          if (document.hidden) return;
+          giveCoin(state, passive);
+          // Throttle saves from passive ticks.
+          maybeSaveState();
+          // Only update coins UI to keep this fast.
+          renderCoinsOnly(state);
+        } catch (e) {
+          console.warn('passive tick failed', e);
+        }
       }, 1000);
     }
   } catch (e) {
@@ -59,9 +83,12 @@ function playAndShow(id) {
   hideIdleHint();
   // Save state
   saveState(state);
+  // Update coin UI immediately (lightweight)
+  renderCoinsOnly(state);
   // Revert after 180ms
   setTimeout(() => {
-    render(state);
+    // Only revert visual body changes (don't re-run skins/audio sync)
+    render(state, false, true);
   }, 500);
 }
 
@@ -112,7 +139,8 @@ function init() {
   if (e.key === 'f' || e.key === 'F') {
   giveCoin(state, 1000);
   saveState(state);
-  render(state);
+  // Only update coins UI for this cheat to avoid heavy work
+  renderCoinsOnly(state);
         // small toast confirmation
         const toast = document.createElement('div');
         toast.textContent = '+1000 monedas';
