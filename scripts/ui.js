@@ -446,6 +446,8 @@ export function renderShop(state) {
         saveState(state);
         render(state);
         renderShop(state);
+  // If the app exposes an update for passive income, call it so upgrades take effect immediately
+  try { if (window._hr && typeof window._hr.updatePassiveIncome === 'function') window._hr.updatePassiveIncome(); } catch (e) {}
         
         // Show purchase confirmation
         const toast = document.createElement('div');
