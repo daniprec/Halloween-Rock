@@ -33,7 +33,7 @@ export const SHOP_ITEMS = [
   { id: 'cursed', kind: 'drum-skin', name: 'Bombo Maldito', price: 666, sample: 'public/audio/jumpscare.mp3', target: 'kick', image: 'public/images/drum_cursed.png', tap: 'public/images/drum_tap_cursed.png'},
   { id: 'oiia', kind: 'drum-skin', name: 'Bombo: OIIA', price: 5000, sample: 'public/audio/oiia.mp3', target: 'kick', image: 'public/images/drum_oiia.png', tap: 'public/images/drum_tap_oiia.gif'},
   { id: 'goomba', kind: 'drum-skin', name: 'Tom: Goomba', price: 200, sample: 'public/audio/goomba.mp3', target: 'tom', image: 'public/images/tom_goomba.png', tap: 'public/images/tom_tap_goomba.png'},
-  { id: 'blood', kind: 'drum-skin', name: 'Plato de Sangre', price: 800, target: 'cymbal', image: 'public/images/cymbal_blood.png', tap: 'public/images/cymbal_tap_blood.png'},
+  { id: 'blood', kind: 'drum-skin', name: 'Plato de Sangre', price: 800, sample: 'public/audio/blood.mp3', target: 'cymbal', image: 'public/images/cymbal_blood.png', tap: 'public/images/cymbal_tap_blood.png'},
   { id: 'bombardino', kind: 'drum-skin', name: 'Plato: Bombardino', price: 3000, sample: 'public/audio/bombardino.mp3', target: 'cymbal', image: 'public/images/cymbal_bombardino.png', tap: 'public/images/cymbal_tap_bombardino.png'},
   { id: 'kolog', kind: 'drum-skin', name: 'Caja: Kolog', price: 400, sample: 'public/audio/kolog.mp3', target: 'snare', image: 'public/images/snare_kolog.png', tap: 'public/images/snare_tap_kolog.png'},
   // Backgrounds (can be purchased and equipped via the shop)
