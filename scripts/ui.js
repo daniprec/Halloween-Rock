@@ -88,6 +88,20 @@ export function initializeUI() {
     // non-fatal
     console.warn('preload images failed', e);
   }
+
+  // Close the shop when user clicks the backdrop (outside the modal card)
+  try {
+    if (shopModal) {
+      shopModal.addEventListener('click', (e) => {
+        // If the click target is the backdrop itself (not a descendent like .modal-card), close.
+        if (e.target === shopModal) {
+          try { closeShopModal(); } catch (err) { console.warn('closeShopModal failed', err); }
+        }
+      });
+    }
+  } catch (e) {
+    console.warn('backdrop click handler setup failed', e);
+  }
 }
 
 // Main render function
