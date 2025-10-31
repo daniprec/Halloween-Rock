@@ -79,6 +79,41 @@ body {
   box-shadow: 0 6px 20px rgba(255, 255, 255, 0.06);
 }
 
+/* Flexible background layer for the doodle card. Uses a CSS variable
+   `--doodle-bg` so you can override it with an image or gradient. The
+   pseudo-element covers the full card and scales via background-size: cover. */
+.doodle {
+  position: relative;
+  overflow: hidden;
+}
+.doodle::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  /* Default background: subtle radial gradient. Override with --doodle-bg. */
+  background: var(--doodle-bg, radial-gradient(1200px 600px at 10% 20%, rgba(154,134,255,0.18), transparent 30%), linear-gradient(180deg, rgba(0,0,0,0.06), rgba(0,0,0,0)));
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* Ensure doodle content sits above the background layer */
+.doodle > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Use the provided graveyard image as the doodle background. Keep this
+   relative path so it works when served from the project root. If you
+   deploy the app from a subfolder, adjust the path accordingly. */
+.doodle {
+  /* Use absolute path so the URL resolves no matter where the CSS is served from */
+  --doodle-bg: url('/public/background/graveyard.jpg');
+}
+
 /* face used as an overlayed image inside the stacked figure; size is controlled by .stack */
 .face {
   display: block;
