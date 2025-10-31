@@ -4,7 +4,9 @@
   "private": true,
   "scripts": {
     "build": "node -e \"process.exit(0)\"",
-    "lint": "node -e \"process.exit(0)\"",
-    "test": "node -e \"process.exit(0)\""
+    "lint": "eslint . --ext .js",
+    "test": "node -e \"process.exit(0)\"",
+    "format": "prettier --write \"**/*.js\"",
+    "format:check": "prettier --check \"**/*.js\""
   }
 }

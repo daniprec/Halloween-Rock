@@ -1,5 +1,10 @@
 // UI rendering and animations
-import { SHOP_ITEMS, saveState, buyItem as stateBuyItem, equipItem as stateEquipItem } from './state.js';
+import {
+  SHOP_ITEMS,
+  saveState,
+  buyItem as stateBuyItem,
+  equipItem as stateEquipItem,
+} from './state.js';
 import { setInstrumentSample, resetInstrumentSample, playSampleUrl } from './audio.js';
 
 // DOM element references
@@ -36,7 +41,7 @@ export function initializeUI() {
   snareTapImg = document.getElementById('snareTapImg');
   armRightSnareImg = document.getElementById('armRightSnareImg');
   playArea = document.querySelector('.play-area');
-  
+
   // Create idle hint
   idleHint = document.createElement('div');
   idleHint.id = 'idleHint';
@@ -92,10 +97,14 @@ export function initializeUI() {
   // Close the shop when user clicks the backdrop (outside the modal card)
   try {
     if (shopModal) {
-      shopModal.addEventListener('click', (e) => {
+      shopModal.addEventListener('click', e => {
         // If the click target is the backdrop itself (not a descendent like .modal-card), close.
         if (e.target === shopModal) {
-          try { closeShopModal(); } catch (err) { console.warn('closeShopModal failed', err); }
+          try {
+            closeShopModal();
+          } catch (err) {
+            console.warn('closeShopModal failed', err);
+          }
         }
       });
     }
@@ -126,10 +135,16 @@ export function render(state, updateSkins = true, updateBody = true) {
           try {
             const resolved = new URL(bgItem.image, document.baseURI).href;
             // Add a subtle dark overlay for readability
-            doodleEl.style.setProperty('--doodle-bg', `linear-gradient(rgba(0,0,0,0.32), rgba(0,0,0,0.32)), url('${resolved}')`);
+            doodleEl.style.setProperty(
+              '--doodle-bg',
+              `linear-gradient(rgba(0,0,0,0.32), rgba(0,0,0,0.32)), url('${resolved}')`
+            );
           } catch (e) {
             // Fallback: use the raw path
-            doodleEl.style.setProperty('--doodle-bg', `linear-gradient(rgba(0,0,0,0.32), rgba(0,0,0,0.32)), url('${bgItem.image}')`);
+            doodleEl.style.setProperty(
+              '--doodle-bg',
+              `linear-gradient(rgba(0,0,0,0.32), rgba(0,0,0,0.32)), url('${bgItem.image}')`
+            );
           }
         }
       } else {
@@ -165,7 +180,8 @@ export function render(state, updateSkins = true, updateBody = true) {
 
     // Change idleHint message and show
     if (reachedThreshold && !alreadyPurchased) {
-      idleHint.textContent = '¡Pulsa el botón Mejoras (arriba) y usa tus monedas para comprar nuevos instrumentos!';
+      idleHint.textContent =
+        '¡Pulsa el botón Mejoras (arriba) y usa tus monedas para comprar nuevos instrumentos!';
       idleHint.classList.add('show');
     }
 
@@ -177,11 +193,11 @@ export function render(state, updateSkins = true, updateBody = true) {
     console.warn('shop reveal check failed', e);
   }
 
-    if (updateBody) updateFigureImages(state);
-    if (updateSkins) {
-      updateCostumeImages(state);
-      updateInstrumentSkins(state);
-    }
+  if (updateBody) updateFigureImages(state);
+  if (updateSkins) {
+    updateCostumeImages(state);
+    updateInstrumentSkins(state);
+  }
   // Sync audio samples for equipped skins (best-effort, async)
   try {
     // fire-and-forget: don't await here to keep render sync
@@ -223,7 +239,9 @@ function updateInstrumentSkins(state) {
       if (drumImg) drumImg.src = 'public/images/drum.png';
       if (drumTapImg) {
         drumTapImg.src = 'public/images/drum_tap.png';
-        try { drumTapImg.classList.remove('tap--cursed'); } catch (e) {}
+        try {
+          drumTapImg.classList.remove('tap--cursed');
+        } catch (e) {}
       }
     }
 
@@ -339,14 +357,30 @@ export function updateCostumeImages(state) {
     }
   } else {
     // Reset to default images
-    if (face) {face.src = 'public/images/face.png';}
-    if (bodyImg) {bodyImg.src = 'public/images/body.png';}
-    if (armRightImg) {armRightImg.src = 'public/images/arm_right.png';}
-    if (armLeftImg) {armLeftImg.src = 'public/images/arm_left.png';}
-    if (armLeftCymbalImg) {armLeftCymbalImg.src = 'public/images/arm_left_cymbal.png';}
-    if (armLeftTomImg) {armLeftTomImg.src = 'public/images/arm_left_tom.png';}
-    if (armRightTomImg) {armRightTomImg.src = 'public/images/arm_right_tom.png';}
-    if (armRightSnareImg) {armRightSnareImg.src = 'public/images/arm_right_snare.png';}
+    if (face) {
+      face.src = 'public/images/face.png';
+    }
+    if (bodyImg) {
+      bodyImg.src = 'public/images/body.png';
+    }
+    if (armRightImg) {
+      armRightImg.src = 'public/images/arm_right.png';
+    }
+    if (armLeftImg) {
+      armLeftImg.src = 'public/images/arm_left.png';
+    }
+    if (armLeftCymbalImg) {
+      armLeftCymbalImg.src = 'public/images/arm_left_cymbal.png';
+    }
+    if (armLeftTomImg) {
+      armLeftTomImg.src = 'public/images/arm_left_tom.png';
+    }
+    if (armRightTomImg) {
+      armRightTomImg.src = 'public/images/arm_right_tom.png';
+    }
+    if (armRightSnareImg) {
+      armRightSnareImg.src = 'public/images/arm_right_snare.png';
+    }
   }
 }
 
@@ -400,7 +434,7 @@ export function showTapVisual(id) {
     if (armLeftTomImg) armLeftTomImg.style.opacity = '0';
     if (cymbalImg) cymbalImg.style.opacity = '0';
     if (cymbalTapImg) cymbalTapImg.style.opacity = '1';
-  } else if (id === 'tom' ) {
+  } else if (id === 'tom') {
     if (tomImg) tomImg.style.opacity = '0';
     if (tomTapImg) tomTapImg.style.opacity = '1';
     if (armLeftImg) armLeftImg.style.opacity = '0';
@@ -409,7 +443,7 @@ export function showTapVisual(id) {
     if (armRightImg) armRightImg.style.opacity = '0';
     if (armRightTomImg) armRightTomImg.style.opacity = '1';
     if (armRightSnareImg) armRightSnareImg.style.opacity = '0';
-  } else if (id === 'snare' ) {
+  } else if (id === 'snare') {
     if (snareImg) snareImg.style.opacity = '0';
     if (snareTapImg) snareTapImg.style.opacity = '1';
     if (armRightImg) armRightImg.style.opacity = '0';
@@ -458,14 +492,17 @@ export function renderShop(state) {
   }
 
   itemsList.innerHTML = '';
-  
+
   SHOP_ITEMS.forEach(it => {
     // If the item is a drum and the user owns it, skip showing it in the shop
     // Also hide upgrades after purchase (one-time upgrades should disappear)
     const ownedDrums = (state.owned && state.owned.drum) || [];
     const ownedUpgrades = (state.owned && state.owned.upgrade) || [];
     // Hide items the user already owns (drums) or one-time upgrades they bought
-    if ((it.kind === 'drum' && ownedDrums.includes(it.id)) || (it.kind === 'upgrade' && ownedUpgrades.includes(it.id))) {
+    if (
+      (it.kind === 'drum' && ownedDrums.includes(it.id)) ||
+      (it.kind === 'upgrade' && ownedUpgrades.includes(it.id))
+    ) {
       return;
     }
 
@@ -476,17 +513,17 @@ export function renderShop(state) {
 
     const row = document.createElement('div');
     row.className = 'item';
-    
+
     const left = document.createElement('div');
     left.innerHTML = `<div><strong>${it.name}</strong><div class='small'>${it.price} monedas</div></div>`;
-    
+
     const right = document.createElement('div');
     // Owned detection: skin are stored under state.owned.skin, other kinds use <kind>s
     let owned = false;
     if (it.kind && it.kind === 'skin') {
       owned = !!(state.owned && state.owned.skin && state.owned.skin.includes(it.id));
     } else {
-      owned = (state.owned && state.owned[it.kind] || []).includes(it.id);
+      owned = ((state.owned && state.owned[it.kind]) || []).includes(it.id);
     }
 
     if (owned) {
@@ -495,7 +532,11 @@ export function renderShop(state) {
       let isEquipped = false;
       if (it.kind && it.kind === 'skin') {
         const target = it.target;
-        isEquipped = !!(state.equipped && state.equipped.skin && state.equipped.skin[target] === it.id);
+        isEquipped = !!(
+          state.equipped &&
+          state.equipped.skin &&
+          state.equipped.skin[target] === it.id
+        );
       } else {
         isEquipped = state.equipped && state.equipped[it.kind] === it.id;
       }
@@ -557,34 +598,38 @@ export function renderShop(state) {
           alert(result.message);
           return;
         }
-          // Equip the item by default after purchase
-          // Play sample unless the item has the `equip` property (used for silent items)
-          try {
-            stateEquipItem(state, it);
-            if (it.equip) {
-              playSampleUrl(it.equip);
-            } else if (it.sample) {
-              playSampleUrl(it.sample);
-            }
-          } catch (e) {
-            console.warn('auto-equip after purchase failed', e);
+        // Equip the item by default after purchase
+        // Play sample unless the item has the `equip` property (used for silent items)
+        try {
+          stateEquipItem(state, it);
+          if (it.equip) {
+            playSampleUrl(it.equip);
+          } else if (it.sample) {
+            playSampleUrl(it.sample);
           }
+        } catch (e) {
+          console.warn('auto-equip after purchase failed', e);
+        }
         saveState(state);
         render(state);
         renderShop(state);
-  // If the app exposes an update for passive income, call it so upgrades take effect immediately
-  try { if (window._hr && typeof window._hr.updatePassiveIncome === 'function') window._hr.updatePassiveIncome(); } catch (e) {}
-        
+        // If the app exposes an update for passive income, call it so upgrades take effect immediately
+        try {
+          if (window._hr && typeof window._hr.updatePassiveIncome === 'function')
+            window._hr.updatePassiveIncome();
+        } catch (e) {}
+
         // Show purchase confirmation
         const toast = document.createElement('div');
         toast.textContent = '¡Comprado!';
-        toast.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:grey;padding:8px 12px;border-radius:8px;z-index:9999';
+        toast.style.cssText =
+          'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#222;color:grey;padding:8px 12px;border-radius:8px;z-index:9999';
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 1200);
       });
       right.appendChild(b);
     }
-    
+
     row.appendChild(left);
     row.appendChild(right);
     itemsList.appendChild(row);
@@ -603,9 +648,8 @@ export function closeShopModal() {
 function renderOwnedPlayButtons(state) {
   const row = document.getElementById('ownedPlayRow');
   row.innerHTML = '';
-  
-  const ownedDrums = state.owned.drum || [];
 
+  const ownedDrums = state.owned.drum || [];
 
   ownedDrums.forEach(id => {
     const it = SHOP_ITEMS.find(s => s.id === id);
@@ -614,7 +658,7 @@ function renderOwnedPlayButtons(state) {
     b.className = 'small-play-btn';
     b.title = name;
     b.setAttribute('aria-label', name);
-    
+
     if (it && it.icon) {
       const img = document.createElement('img');
       img.src = it.icon;
@@ -625,7 +669,7 @@ function renderOwnedPlayButtons(state) {
     } else {
       b.textContent = name;
     }
-    
+
     // Store instrument id for event handler
     b.dataset.instrumentId = id;
     row.appendChild(b);
@@ -639,6 +683,6 @@ export function getUIElements() {
     closeShop,
     playArea,
     shopModal,
-    coinCount
+    coinCount,
   };
 }

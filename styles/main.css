@@ -3,7 +3,7 @@
   --white: #ffffff;
   --orange: #f59b14;
   --grey: #7d7d7d;
-  --purple : #9a86ff;
+  --purple: #9a86ff;
   --skin: #ba7f6d;
   --red: #ff0000;
   color-scheme: dark;
@@ -92,7 +92,11 @@ body {
   inset: 0;
   z-index: 0;
   /* Default background: subtle radial gradient. Override with --doodle-bg. */
-  background: var(--doodle-bg, radial-gradient(1200px 600px at 10% 20%, rgba(154,134,255,0.18), transparent 30%), linear-gradient(180deg, rgba(0,0,0,0.06), rgba(0,0,0,0)));
+  background: var(
+    --doodle-bg,
+    radial-gradient(1200px 600px at 10% 20%, rgba(154, 134, 255, 0.18), transparent 30%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.06), rgba(0, 0, 0, 0))
+  );
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -114,7 +118,7 @@ body {
      fully-resolved URL at runtime (using document.baseURI) so backgrounds
      work both locally and when deployed under subpaths. */
   /* provide a sensible fallback color so the card isn't empty while JS runs */
-  --doodle-bg: radial-gradient(1200px 600px at 10% 20%, rgba(154,134,255,0.18), transparent 30%);
+  --doodle-bg: radial-gradient(1200px 600px at 10% 20%, rgba(154, 134, 255, 0.18), transparent 30%);
 }
 
 /* face used as an overlayed image inside the stacked figure; size is controlled by .stack */
@@ -170,7 +174,6 @@ body {
 #face {
   z-index: 40;
 }
-
 
 #armLeftImg {
   z-index: 29;
@@ -384,8 +387,8 @@ button {
   left: 50%;
   top: 36%;
   transform: translate(-50%, -50%);
-  width: 80vw;          /* <- 80% of the viewport width */
-  max-width: 420px;     /* <- optional cap to keep it from getting too wide on large screens */
+  width: 80vw; /* <- 80% of the viewport width */
+  max-width: 420px; /* <- optional cap to keep it from getting too wide on large screens */
   box-sizing: border-box; /* include padding in the width calculation */
   background: rgba(0, 0, 0, 0.6);
   padding: 10px 14px;
@@ -396,8 +399,8 @@ button {
   opacity: 0;
   transition: opacity 0.18s ease, transform 0.25s cubic-bezier(0.2, 0.9, 0.2, 1);
   z-index: 2000;
-  text-align: center;   /* nicer for wider blocks */
-  word-wrap: break-word;/* avoid overflow from long words */
+  text-align: center; /* nicer for wider blocks */
+  word-wrap: break-word; /* avoid overflow from long words */
 }
 
 .idle-hint.show {

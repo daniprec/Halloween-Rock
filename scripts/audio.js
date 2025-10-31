@@ -11,7 +11,7 @@ masterGain.connect(audioCtx.destination);
 
 // --- State -----------------------------------------------------------------
 /** @type {Record<string, AudioBuffer>} */
-const samples = Object.create(null);           // key: sample URL or 'default'
+const samples = Object.create(null); // key: sample URL or 'default'
 /** @type {Record<string, string|undefined>} */
 const instrumentToSample = Object.create(null); // instrument id -> sample URL (or undefined)
 for (const s of SHOP_ITEMS) instrumentToSample[s.id] = s.sample || undefined;
@@ -55,7 +55,11 @@ function pLimit(max) {
   return async fn => {
     if (active >= max) await new Promise(r => queue.push(r));
     active++;
-    try { return await fn(); } finally { next(); }
+    try {
+      return await fn();
+    } finally {
+      next();
+    }
   };
 }
 const limit = pLimit(3); // decode 3 at a time is a good mobile-friendly cap
@@ -83,9 +87,7 @@ async function loadSampleURL(url) {
  */
 export async function loadAllSamples() {
   /** Unique URLs present in SHOP_ITEMS */
-  const urls = Array.from(
-    new Set(SHOP_ITEMS.map(s => s.sample).filter(Boolean))
-  );
+  const urls = Array.from(new Set(SHOP_ITEMS.map(s => s.sample).filter(Boolean)));
 
   // Optional: add a commonly used “basic” alias if present in mapping
   // (only if some item literally uses 'basic' URL). Otherwise skip.
@@ -98,7 +100,10 @@ export async function loadAllSamples() {
     console.groupCollapsed('[Audio] Load summary');
     console.log('Requested URLs:', urls);
     console.log('Loaded keys:', Object.keys(samples));
-    console.log('Results:', results.map(r => r.status));
+    console.log(
+      'Results:',
+      results.map(r => r.status)
+    );
     console.groupEnd();
   }
 }
@@ -146,7 +151,9 @@ export function playInstrument(instrumentId) {
     src.connect(masterGain);
     // Use onended to detach; avoids timers and leaked AudioParams.
     src.onended = () => {
-      try { src.disconnect(); } catch {}
+      try {
+        src.disconnect();
+      } catch {}
     };
     src.start();
   } catch (e) {
@@ -159,14 +166,20 @@ export function playInstrument(instrumentId) {
       g.gain.value = 0.0001;
       g.gain.exponentialRampToValueAtTime(0.4, audioCtx.currentTime + 0.01);
       g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
-      o.connect(g); g.connect(masterGain);
-      o.start(); o.stop(audioCtx.currentTime + 0.16);
+      o.connect(g);
+      g.connect(masterGain);
+      o.start();
+      o.stop(audioCtx.currentTime + 0.16);
     } catch {}
   }
 }
 
-export function getAudioContext() { return audioCtx; }
-export function setMasterVolume(v) { masterGain.gain.value = Math.max(0, Math.min(1, v)); }
+export function getAudioContext() {
+  return audioCtx;
+}
+export function setMasterVolume(v) {
+  masterGain.gain.value = Math.max(0, Math.min(1, v));
+}
 
 /**
  * Play a sample by URL. Loads the sample if needed, then plays it once.
@@ -181,7 +194,11 @@ export async function playSampleUrl(url) {
     const src = audioCtx.createBufferSource();
     src.buffer = buf;
     src.connect(masterGain);
-    src.onended = () => { try { src.disconnect(); } catch {} };
+    src.onended = () => {
+      try {
+        src.disconnect();
+      } catch {}
+    };
     src.start();
   } catch (e) {
     console.warn('playSampleUrl failed', e);
