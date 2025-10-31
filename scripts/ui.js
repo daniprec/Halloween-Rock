@@ -111,6 +111,30 @@ export function initializeUI() {
 export function render(state, updateSkins = true, updateBody = true) {
   coinCount.textContent = state.coins;
 
+  // Apply equipped background (if any) to the doodle card by setting the
+  // CSS variable `--doodle-bg`. Use an absolute path to avoid relative-url
+  // issues when the CSS file is served from a different folder.
+  try {
+    const doodleEl = document.querySelector('.doodle');
+    const bgId = state && state.equipped ? state.equipped.background : null;
+    if (doodleEl) {
+      if (bgId) {
+        const bgItem = SHOP_ITEMS.find(s => s.id === bgId && s.kind === 'background');
+        if (bgItem && bgItem.image) {
+          let imgPath = String(bgItem.image || '').trim();
+          if (imgPath && !imgPath.startsWith('/') && !/^https?:/.test(imgPath)) imgPath = '/' + imgPath;
+          // Add a subtle dark overlay for readability
+          doodleEl.style.setProperty('--doodle-bg', `linear-gradient(rgba(0,0,0,0.32), rgba(0,0,0,0.32)), url('${imgPath}')`);
+        }
+      } else {
+        // Remove inline override so CSS default applies
+        doodleEl.style.removeProperty('--doodle-bg');
+      }
+    }
+  } catch (e) {
+    console.warn('apply background failed', e);
+  }
+
   // Show the shop button when the user first reaches 5 coins.
   // Persist that we've shown it so it stays visible afterwards.
   try {

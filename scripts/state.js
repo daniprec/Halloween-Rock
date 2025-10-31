@@ -4,8 +4,9 @@ const STORAGE_KEY = 'halloween-rock:v1';
 const defaultState = {
   coins: 0,
   shopShown: false,
-  owned: { drums: ['kick'], upgrades: [], costumes: [] , skins: [] },
-  equipped: { costume: null, skins: {} },
+  // Give the user the graveyard background by default (owned & equipped)
+  owned: { drums: ['kick'], upgrades: [], costumes: [], skins: [], backgrounds: ['graveyard'] },
+  equipped: { costume: null, skins: {}, background: 'graveyard' },
   version: 1
 };
 
@@ -26,6 +27,10 @@ export const SHOP_ITEMS = [
   { id: 'goomba', kind: 'drum-skin', name: 'Goomba (Tom)', price: 200, sample: 'public/audio/goomba.mp3', target: 'tom', image: 'public/images/tom_goomba.png', tap: 'public/images/tom_tap_goomba.png'},
   { id: 'bombardino', kind: 'drum-skin', name: 'Bombardino (Plato)', price: 800, sample: 'public/audio/bombardino.mp3', target: 'cymbal', image: 'public/images/cymbal_bombardino.png', tap: 'public/images/cymbal_tap_bombardino.png'},
   { id: 'kolog', kind: 'drum-skin', name: 'Kolog (Caja)', price: 400, sample: 'public/audio/kolog.mp3', target: 'snare', image: 'public/images/snare_kolog.png', tap: 'public/images/snare_tap_kolog.png'},
+  // Backgrounds (can be purchased and equipped via the shop)
+  { id: 'graveyard', kind: 'background', name: 'Fondo: Cementerio', price: 0, image: 'public/background/graveyard.jpg' },
+  { id: 'forest', kind: 'background', name: 'Fondo: Bosque', price: 30, image: 'public/background/forest.jpg' },
+  { id: 'stage', kind: 'background', name: 'Fondo: Escenario', price: 70, image: 'public/background/stage.jpg' },
 ];
 
 export function loadState() {
