@@ -15,6 +15,7 @@ export const SHOP_ITEMS = [
   { id: 'tom', kind: 'drum', name: 'Tom', price: 5, icon: 'public/images/icon_tom.png', sample: 'public/audio/tom.wav' },
   { id: 'cymbal', kind: 'drum', name: 'Plato', price: 20, icon: 'public/images/icon_cymbal.png', sample: 'public/audio/cymbal.wav' },
   { id: 'snare', kind: 'drum', name: 'Caja', price: 50, icon: 'public/images/icon_snare.png', sample: 'public/audio/snare.wav' },
+  { id: 'autocoin', kind: 'upgrade', name: '+1 moneda/segundo', price: 200, passive: 1 },
   { id: 'double', kind: 'upgrade', name: 'Ganancias x2', price: 500 },
   { id: 'sunglasses', kind: 'costume', name: 'Gafas de sol', price: 10, face: 'y' },
   { id: 'dante', kind: 'costume', name: 'Máscara de Dante', price: 40, face: 'y' },
