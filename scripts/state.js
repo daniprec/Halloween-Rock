@@ -70,7 +70,7 @@ export const SHOP_ITEMS = [
   {
     id: 'firecape',
     kind: 'costume',
-    name: 'Capa de Llamas',
+    name: 'Capa de Fuego',
     price: 10000,
     body: 'gif',
     armLeft: 'y',
