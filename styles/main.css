@@ -416,3 +416,38 @@ button {
   font-size: 13px;
   font-weight: 700;
 }
+
+/* Shop category tabs */
+.shop-tabs {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.shop-tab {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 6px 12px;
+  border-radius: 6px;
+  color: var(--grey);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.shop-tab:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--white);
+}
+
+.shop-tab.active {
+  background: var(--orange);
+  color: var(--black);
+  border-color: var(--orange);
+}

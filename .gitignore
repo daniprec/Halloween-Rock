@@ -210,3 +210,7 @@ __marimo__/
 krita.kra~
 krita.kra-autosave.kra
 *.png~
+
+# Node.js
+node_modules/
+package-lock.json
