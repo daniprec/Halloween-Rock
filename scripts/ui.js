@@ -536,11 +536,12 @@ export function renderShop(state) {
 
   itemsList.innerHTML = '';
 
+  // Extract owned collections once to avoid duplication
+  const ownedDrums = (state.owned && state.owned.drum) || [];
+  const ownedUpgrades = (state.owned && state.owned.upgrade) || [];
+
   // Get items with ownership information
   const itemsWithOwnership = SHOP_ITEMS.map(it => {
-    const ownedDrums = (state.owned && state.owned.drum) || [];
-    const ownedUpgrades = (state.owned && state.owned.upgrade) || [];
-
     // Check ownership
     let owned = false;
     if (it.kind && it.kind === 'skin') {
@@ -551,8 +552,6 @@ export function renderShop(state) {
 
     return { ...it, owned };
   }).filter(it => {
-    const ownedDrums = (state.owned && state.owned.drum) || [];
-    const ownedUpgrades = (state.owned && state.owned.upgrade) || [];
 
     // Hide items the user already owns (drums) or one-time upgrades they bought
     if (
