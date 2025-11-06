@@ -461,6 +461,9 @@ export function hideIdleHint() {
 }
 
 // Shop modal
+// Store the selected category globally for the shop
+let selectedCategory = 'all';
+
 export function renderShop(state) {
   // Show completion percentage at the top-left of the modal, below header/buttons
   const modalCard = shopModal && shopModal.querySelector('.modal-card');
@@ -491,34 +494,54 @@ export function renderShop(state) {
     summary.textContent = `Completado: ${pct}% (${ownedCount}/${total})`;
   }
 
+  // Create or update category tabs
+  let tabsContainer = modalCard && modalCard.querySelector('#shopTabs');
+  if (!tabsContainer) {
+    tabsContainer = document.createElement('div');
+    tabsContainer.id = 'shopTabs';
+    tabsContainer.className = 'shop-tabs';
+    if (modalCard) {
+      const summary = modalCard.querySelector('#shopCompletion');
+      if (summary) {
+        summary.parentNode.insertBefore(tabsContainer, summary.nextSibling);
+      } else {
+        modalCard.insertBefore(tabsContainer, itemsList);
+      }
+    }
+  }
+
+  // Define categories - group drums and skins as "instruments"
+  const categories = [
+    { id: 'all', label: 'Todo' },
+    { id: 'upgrade', label: 'Mejoras' },
+    { id: 'costume', label: 'Disfraces' },
+    { id: 'instruments', label: 'Instrumentos' },
+    { id: 'background', label: 'Fondos' },
+  ];
+
+  tabsContainer.innerHTML = '';
+  categories.forEach(cat => {
+    const tab = document.createElement('button');
+    tab.className = 'shop-tab';
+    if (selectedCategory === cat.id) {
+      tab.classList.add('active');
+    }
+    tab.textContent = cat.label;
+    tab.addEventListener('click', () => {
+      selectedCategory = cat.id;
+      renderShop(state);
+    });
+    tabsContainer.appendChild(tab);
+  });
+
   itemsList.innerHTML = '';
 
-  SHOP_ITEMS.forEach(it => {
-    // If the item is a drum and the user owns it, skip showing it in the shop
-    // Also hide upgrades after purchase (one-time upgrades should disappear)
+  // Get items with ownership information
+  const itemsWithOwnership = SHOP_ITEMS.map(it => {
     const ownedDrums = (state.owned && state.owned.drum) || [];
     const ownedUpgrades = (state.owned && state.owned.upgrade) || [];
-    // Hide items the user already owns (drums) or one-time upgrades they bought
-    if (
-      (it.kind === 'drum' && ownedDrums.includes(it.id)) ||
-      (it.kind === 'upgrade' && ownedUpgrades.includes(it.id))
-    ) {
-      return;
-    }
 
-    // If an upgrade defines a `requires` id, only show it after the prerequisite upgrade is owned
-    if (it.kind === 'upgrade' && it.requires && !ownedUpgrades.includes(it.requires)) {
-      return;
-    }
-
-    const row = document.createElement('div');
-    row.className = 'item';
-
-    const left = document.createElement('div');
-    left.innerHTML = `<div><strong>${it.name}</strong><div class='small'>${it.price} monedas</div></div>`;
-
-    const right = document.createElement('div');
-    // Owned detection: skin are stored under state.owned.skin, other kinds use <kind>s
+    // Check ownership
     let owned = false;
     if (it.kind && it.kind === 'skin') {
       owned = !!(state.owned && state.owned.skin && state.owned.skin.includes(it.id));
@@ -526,7 +549,54 @@ export function renderShop(state) {
       owned = ((state.owned && state.owned[it.kind]) || []).includes(it.id);
     }
 
-    if (owned) {
+    return { ...it, owned };
+  }).filter(it => {
+    const ownedDrums = (state.owned && state.owned.drum) || [];
+    const ownedUpgrades = (state.owned && state.owned.upgrade) || [];
+
+    // Hide items the user already owns (drums) or one-time upgrades they bought
+    if (
+      (it.kind === 'drum' && ownedDrums.includes(it.id)) ||
+      (it.kind === 'upgrade' && ownedUpgrades.includes(it.id))
+    ) {
+      return false;
+    }
+
+    // If an upgrade defines a `requires` id, only show it after the prerequisite upgrade is owned
+    if (it.kind === 'upgrade' && it.requires && !ownedUpgrades.includes(it.requires)) {
+      return false;
+    }
+
+    // Filter by selected category
+    if (selectedCategory === 'all') {
+      return true;
+    } else if (selectedCategory === 'instruments') {
+      // Group drums and skins together as instruments
+      return it.kind === 'drum' || it.kind === 'skin';
+    } else {
+      return it.kind === selectedCategory;
+    }
+  });
+
+  // Sort items: first by ownership (not owned first), then by price
+  itemsWithOwnership.sort((a, b) => {
+    if (a.owned !== b.owned) {
+      return a.owned ? 1 : -1; // Move owned items to bottom
+    }
+    // Sort by price (ascending)
+    return (a.price || 0) - (b.price || 0);
+  });
+
+  itemsWithOwnership.forEach(it => {
+    const row = document.createElement('div');
+    row.className = 'item';
+
+    const left = document.createElement('div');
+    left.innerHTML = `<div><strong>${it.name}</strong><div class='small'>${it.price} monedas</div></div>`;
+
+    const right = document.createElement('div');
+
+    if (it.owned) {
       row.classList.add('owned');
       // Determine equipped state. Skins are stored in state.equipped.skin[target]
       let isEquipped = false;
